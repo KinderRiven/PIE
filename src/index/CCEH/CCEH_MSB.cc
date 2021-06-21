@@ -6,8 +6,6 @@ namespace PIE {
 namespace CCEH {
 
   void CCEHIndex::insert(const CCEH_Key_t &key, CCEH_Value_t value) {
-    
-    static thread_local uint8_t tmpkey[1024];
 
     auto f_hash = hash_funcs[0](Data(key), Size(key), f_seed);
     auto f_idx = (f_hash & kMask) * kNumPairPerCacheLine;
@@ -47,7 +45,7 @@ namespace CCEH {
 
       // for string key, _key stores the pointer's value, instead
       // of true string contents
-      uint64_t _key = reinterpret_cast<uint64_t>(target->_[loc].key);
+      uint64_t _key = ToUint64(target->_[loc].key);
       size_t hashval = 0;
       const CCEH_Key_t &keycontent = target->_[loc].key;
 
@@ -63,7 +61,7 @@ namespace CCEH {
       if ((hashval >> (8 * sizeof(f_hash) - target_local_depth)) != pattern) {
 
     INSERT1:
-        if (CCEH_CAS(&target->_[loc].key, &_key, SENTINEL)) {
+        if (CCEH_CAS((uint64_t *)(&target->_[loc].key), &_key, SENTINEL)) {
           // Successfully get this slot position
           // We need to set value first to guarantee crash 
           // consistence and concurrent consistence
@@ -71,7 +69,7 @@ namespace CCEH {
           asm_mfence();
 
           // Only do "value" copy, no content copy for string key
-          target->_[loc].key = reinterpret_cast<uint64_t>(key);
+          target->_[loc].key = ToUint64(key);
           persist_data((char *)&target->_[loc], sizeof (CCEH_Pair));
 
           target->unlock();
@@ -87,7 +85,7 @@ namespace CCEH {
 
 	    auto loc = (s_idx + i) % Segment::kNumSlot;
 
-      uint64_t _key = reinterpret_cast<uint64_t>(target->_[loc].key);
+      uint64_t _key = ToUint64(target->_[loc].key);
       size_t hashval = 0;
       const CCEH_Key_t &keycontent = target->_[loc].key;
 
@@ -102,13 +100,13 @@ namespace CCEH {
       if ((hashval >> (8 * sizeof(f_hash) - target_local_depth)) != pattern) {
         
       INSERT2:
-        if (CCEH_CAS(&(target->_[loc].key), &_key, SENTINEL)) {
+        if (CCEH_CAS((uint64_t *)(&target->_[loc].key), &_key, SENTINEL)) {
           // Successfully get this slot position
           target->_[loc].value = value;
           asm_mfence();
 
           // Only do "value" copy, no content copy for string key
-          target->_[loc].key = reinterpret_cast<uint64_t>(key);
+          target->_[loc].key = ToUint64(key);
           persist_data((char *)&target->_[loc], sizeof (CCEH_Pair));
 
           // release exclusive lock
@@ -278,7 +276,7 @@ DIR_RETRY:
     for (unsigned i = 0; i < kNumPairPerCacheLine * kNumCacheLine; ++i) {
 	    auto loc = (f_idx + i) % Segment::kNumSlot;
       // temporary store 8B value
-      uint64_t _key = reinterpret_cast<uint64_t>(target->_[loc].key);
+      uint64_t _key = ToUint64(target->_[loc].key);
 
       if (_key != NONE && _key != INVALID && _key != SENTINEL) {
         // Do complete key compare
@@ -296,7 +294,7 @@ DIR_RETRY:
     for (unsigned i = 0; i < kNumPairPerCacheLine * kNumCacheLine; ++i){
 	    auto loc = (s_idx + i) % Segment::kNumSlot;
       // temporary store 8B value
-      uint64_t _key = reinterpret_cast<uint64_t>(target->_[loc].key);
+      uint64_t _key = ToUint64(target->_[loc].key);
 
       if (_key != NONE && _key != INVALID && _key != SENTINEL) {
         // Do complete key compare
@@ -323,7 +321,7 @@ DIR_RETRY:
     
     // redistribute all data in current segment
     for (unsigned i = 0; i < Segment::kNumSlot; ++i) {
-      auto _key = reinterpret_cast<uint64_t>(target->_[i].key);
+      auto _key = ToUint64(target->_[i].key);
 
       if (_key == 0 || _key == INVALID || _key == SENTINEL) { continue; }
       auto f_hash = hash_funcs[0](Data(target->_[i].key), Size(target->_[i].key), f_seed);
@@ -331,13 +329,13 @@ DIR_RETRY:
 
       if (f_hash & pattern) {
         if (!split[1]->Insert4split(target->_[i].key, target->_[i].value, (f_hash & kMask) * kNumPairPerCacheLine)
-          &&!split[1]->Insert4split(target->_[i].key, target->_[i].value, (s_hash & kMask) * kNumPairPerCacheLine)) {
+            &&!split[1]->Insert4split(target->_[i].key, target->_[i].value, (s_hash & kMask) * kNumPairPerCacheLine)) {
           std::cerr << "[" << __func__ << "]: something wrong -- need to adjust probing distance" << std::endl;
         }
       } else {
         if (!split[0]->Insert4split(target->_[i].key, target->_[i].value, (f_hash & kMask) * kNumPairPerCacheLine)
-          &&!split[0]->Insert4split(target->_[i].key, target->_[i].value, (s_hash & kMask) * kNumPairPerCacheLine)) {
-            std::cerr << "[" << __func__ << "]: something wrong -- need to adjust probing distance" << std::endl;
+            &&!split[0]->Insert4split(target->_[i].key, target->_[i].value, (s_hash & kMask) * kNumPairPerCacheLine)) {
+          std::cerr << "[" << __func__ << "]: something wrong -- need to adjust probing distance" << std::endl;
         }
       }
     }

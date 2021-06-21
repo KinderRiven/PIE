@@ -10,6 +10,7 @@
 #include <cstdio>
 #include <random>
 #include <algorithm>
+#include <locale>
 
 const char *pmem_file = "/home/pmem0/pm";
 
@@ -20,6 +21,7 @@ extern char *optarg;
 // Test parameter
 size_t test_size;   // The number of insert operation count
 size_t thread_num;  // The number of created threads
+size_t key_len = 16;
 
 struct ThreadResults {
   uint64_t throughput;
@@ -43,9 +45,14 @@ PIE::Index *test_index;
 ThreadResults thread_results [max_thread_num];
 std::thread   threads[max_thread_num];
 
+
+
+
 void InitTest();
 void DoInsert();
 void DoSearch();
+
+static const char *generate_string ();
 
 int main(int argc, char *argv[]) {
 
@@ -53,6 +60,7 @@ int main(int argc, char *argv[]) {
   struct option long_options[] = {  
     {"size"      , required_argument, nullptr, 1},
     {"thread_num", required_argument, nullptr, 2},
+    {"key_len"   , required_argument, nullptr, 3}
   };
 
   int opt_idx, c;
@@ -60,6 +68,7 @@ int main(int argc, char *argv[]) {
     switch (c) {
       case 1: test_size   = atoll(optarg); break;
       case 2: thread_num  = atoll(optarg); break;
+      case 3: key_len     = atoll(optarg); break;
       default: std::cerr << "Invalid Parameter: " << optarg << "\n";
     }
   }
@@ -92,10 +101,17 @@ void InitTest() {
   // size of test data
   decltype(test_size) cnt = 0;
   while (cnt < test_size) {
+#ifdef STRINGKEY
+    const char* key = generate_string();
+#else
     uint64_t key = rand() % UINT64_MAX;
-    thread_data[cnt % thread_num].push_back ({(const char*)key, 0});
+    key_len = 0;
+#endif
+    thread_data[cnt % thread_num].push_back ({(const char*)key, key_len});
     ++cnt;
   }
+
+  printf("[Finish Init Test]\n");
 }
 
 void DoInsert() {
@@ -157,6 +173,7 @@ void DoInsert() {
             << std::setw(strlen("Throughput(kops/s)"))  << kops       << " | " 
             << std::setw(strlen("Success Ratio"))       << succ_ratio << " | " 
             << std::setw(strlen("Memory Usage(MB)"))    << mem_use    << " |\n";
+
 
   // std::cout << "|                                                                                    |\n";
   std::cout << "--------------------------------------------------------------------------------------\n\n";
@@ -228,4 +245,16 @@ void DoSearch() {
 
   // std::cout << "|                                                                                    |\n";
   std::cout << "--------------------------------------------------------------------------------------\n\n";
+}
+
+// randomly generate a string key
+static const char *generate_string() {
+  char *ret = new char [key_len];
+  int cnt = 0;
+  // randomly write data
+  while (cnt++ < key_len) {
+    auto idx = rand() % key_len;
+    ret[idx] = rand() % 255;
+  }
+  return reinterpret_cast<const char *>(ret);
 }

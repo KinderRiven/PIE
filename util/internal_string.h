@@ -31,7 +31,10 @@ namespace PIE {
       memcpy(data+sizeof(uint32_t), str, len);
     }
 
-    ~InternalString() { delete data; }
+    // TODO: Is it a good idea not to deallocate
+    // memory of InternalString?
+    // ~InternalString() { delete data; }
+    ~InternalString()=default;
 
     // Copyable Semantics
     InternalString(const InternalString& rhs) {
@@ -123,6 +126,9 @@ namespace PIE {
     bool operator== (const uint64_t num) const {
       return reinterpret_cast<uint64_t>(data) == num;
     }
+
+    // Return 8B value of this internal string's pointer
+    uint64_t Raw() const {  return (uint64_t)data;  }
 
   private:
     uint8_t *data;

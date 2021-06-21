@@ -6,10 +6,11 @@ TARGET		= test
 ROOT			= ../../..
 INCLUDE		= -I$(ROOT)/util	-I$(ROOT)/src/include -I$(ROOT)
 CLIB			= -lpthread -lpmem
+KEYTYPE   = -DSTRINGKEY
 
 
 $(TARGET): clean
-	$(CC)	$(CLAGS) $(SRC) $(TEST_SRC) $(INCLUDE) $(CLIB) -o $(TARGET)
+	$(CC)	$(CLAGS) $(KEYTYPE) $(SRC) $(TEST_SRC) $(INCLUDE) $(CLIB) -o $(TARGET)
 
 clean:
 	rm TARGET *.o -rf

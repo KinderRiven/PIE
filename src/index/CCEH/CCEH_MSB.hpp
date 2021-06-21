@@ -17,13 +17,20 @@
 #define f_seed 0xc70697UL
 #define s_seed 0xc70697UL
 
+#define STRINGKEY
+
 namespace PIE  {
 namespace CCEH {
   
   // Key-Value data type definition
-  // key can be either variable-sized string or 64-bits integer
-  // Value is void *;
-#ifdef STRING
+  //
+  //  key: can be either variable-sized string or 64-bits integer
+  //    You may provide your own key type by adding corresponding 
+  //    macro definition here, we use 8B integer key by default as 
+  //    CCEH is originally designed to deal with such case
+  //
+  //  Value: void *;
+#ifdef STRINGKEY
   #define CCEH_Key_t InternalString
   #define ConvertToCCEHKey(key, len, dst)  InternalString((key), (len), (dst))
 #else 
@@ -37,9 +44,11 @@ namespace CCEH {
   // integer type uint64_t as 8B string
   inline const uint8_t* Data(const InternalString &key) { return key.Data(); }
   inline size_t Size(const InternalString &key) { return key.Length(); }
+  inline uint64_t ToUint64(const InternalString &key) { return key.Raw(); }
 
   inline const uint8_t* Data(const uint64_t &key) { return (const uint8_t*)(&key); }
   inline size_t Size(const uint64_t &key) { return sizeof(key); }
+  inline uint64_t ToUint64(const uint64_t &key) { return key; }
 
 
   // Note that #define is not bounded by namespace
@@ -300,8 +309,9 @@ namespace CCEH {
   // By meta data we mean an integer key or a pointer to persistent 
   // data for true variable-length string key
   inline status_code_t CCEHIndex::Insert(const char *key, size_t len, 
-                                    void  *value) {
+                                         void  *value) {
     // First convert generalized key to be internalkey and persist it
+    // When key is 8B integer, dataptr is not used
     uint8_t *dataptr = reinterpret_cast<uint8_t*>
                     (nvm_allocator_->Allocate(sizeof(uint32_t)+len));
     const CCEH_Key_t& internalkey = ConvertToCCEHKey(key, len, dataptr);
@@ -317,7 +327,7 @@ namespace CCEH {
   // Search for coresponding value of key sepcified by "key+len" pair
   // Use CCEH internal "get" function implementation
   inline status_code_t CCEHIndex::Search(const char *key, size_t len, 
-                                    void **value) {
+                                         void **value) {
     // Use local buffer to avoid dynamic memory allocation
     // Can we use static buffer? Is it safe to use static 
     // under concurrency condition?
@@ -336,13 +346,13 @@ namespace CCEH {
   // helper functions
   inline Directory* CCEHIndex::AllocDirectory(size_t depth_) {
     Directory* directory_ptr = reinterpret_cast<Directory*>
-              (nvm_allocator_->Allocate(sizeof (Directory)));
+                  (nvm_allocator_->Allocate(sizeof (Directory)));
 
     directory_ptr->capacity = pow(2, depth_);
     directory_ptr->depth = depth_;
     // Allocate pointer array
     directory_ptr->_ = reinterpret_cast<Segment**>
-              (nvm_allocator_->Allocate(sizeof (Segment*) * directory_ptr->capacity));
+                  (nvm_allocator_->Allocate(sizeof (Segment*) * directory_ptr->capacity));
     // Init concurrency control bit
     directory_ptr->sema = 0;
     return directory_ptr;
@@ -351,8 +361,8 @@ namespace CCEH {
   // Allocate a segment of which local depth is given parameter
   // depth. We need to init memory to be zero for string key condition
   inline Segment* CCEHIndex::AllocSegment(size_t depth) {
-    auto ret = reinterpret_cast<Segment*>
-          (nvm_allocator_->AllocateAlign(sizeof(Segment), 64));
+    Segment *ret = reinterpret_cast<Segment*>
+                (nvm_allocator_->AllocateAlign(sizeof(Segment), 64));
     // Init all memory to be zero
     memset ((void *)ret, 0, sizeof(Segment));
     ret->sema = 0;
@@ -362,11 +372,12 @@ namespace CCEH {
   
 
   // Only used for segment splitting
-  inline bool Segment::Insert4split(const CCEH_Key_t& keyptr, CCEH_Value_t value, size_t loc) {
+  inline bool Segment::Insert4split(const CCEH_Key_t& keyptr, 
+                                    CCEH_Value_t value, size_t loc) {
     for (unsigned i = 0; i < kNumPairPerCacheLine * kNumCacheLine; ++i) {
       auto slot = (loc + i) % kNumSlot;
       if (_[slot].key == INVALID || _[slot].key == NONE) {
-        _[slot].key = reinterpret_cast<uint64_t>(keyptr);
+        _[slot].key = ToUint64(keyptr);
         _[slot].value = value;
         return true;
       }
