@@ -17,8 +17,6 @@
 #define f_seed 0xc70697UL
 #define s_seed 0xc70697UL
 
-#define STRINGKEY
-
 namespace PIE  {
 namespace CCEH {
   
