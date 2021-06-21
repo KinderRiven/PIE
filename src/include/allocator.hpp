@@ -200,7 +200,7 @@ namespace PIE {
 
   inline void *PIENVMAllocator::AllocateInAligned(size_t size, size_t alignment) {
     // check if alignment is power of 2
-    assert(alignment & (alignment-1) == 0);
+    assert((alignment & (alignment-1)) == 0);
 
     // Calculate the size "exceed" the alignment
     size_t mod = size & (alignment - 1);

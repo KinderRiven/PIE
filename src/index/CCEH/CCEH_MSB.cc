@@ -5,7 +5,7 @@
 namespace PIE {
 namespace CCEH {
 
-  void CCEH::insert(const CCEH_Key_t &key, CCEH_Value_t value) {
+  void CCEHIndex::insert(const CCEH_Key_t &key, CCEH_Value_t value) {
     
     static thread_local uint8_t tmpkey[1024];
 
@@ -149,7 +149,7 @@ DIR_RETRY:
     if (target_local_depth == dir->depth){
     // Stop other thread enter when doing split
     if (!dir->suspend()){
-      std::this_thread::yield;
+      std::this_thread::yield();
       goto DIR_RETRY;
     }
 
@@ -243,7 +243,7 @@ DIR_RETRY:
 
   // Search for target value and return
   // return nullptr if didn't find it
-  CCEH_Value_t CCEH::get(const CCEH_Key_t &key) {
+  CCEH_Value_t CCEHIndex::get(const CCEH_Key_t &key) {
 
     auto f_hash = hash_funcs[0](Data(key), Size(key), f_seed);
     auto f_idx = (f_hash & kMask) * kNumPairPerCacheLine;
@@ -313,7 +313,7 @@ DIR_RETRY:
     return nullptr;
   }
 
-  Segment** CCEH::SegmentSplit(Segment *target) {
+  Segment** CCEHIndex::SegmentSplit(Segment *target) {
     Segment** split = new Segment*[2];
 
     split[0] = AllocSegment(target->local_depth+1);

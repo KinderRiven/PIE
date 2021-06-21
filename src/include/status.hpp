@@ -10,7 +10,7 @@ namespace PIE {
     kNotDefined = 3
   };
 
-  const char *StatusString(status_code_t code) {
+  inline const char *StatusString(status_code_t code) {
     static const char *codestring[] = {
       "kOk", "kInsertKeyExist", "kNotFound",
       "kNotDefined"

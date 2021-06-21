@@ -81,16 +81,16 @@ int main(int argc, char *argv[]) {
 void InitTest() {
   assert(test_size > 0 && thread_num > 0);
 
-  const size_t pmem_size = 100 * 1024 * 1024 * 1024;
+  const size_t pmem_size = 100ULL * 1024 * 1024 * 1024;
 
   // Create new index for test
   nvm_allocator = new PIE::PIENVMAllocator(pmem_file, pmem_size);
-  test_index = new PIE::CCEH::CCEH (nvm_allocator, 16);
+  test_index = new PIE::CCEH::CCEHIndex (nvm_allocator, 16);
 
   // generate test data;
   // Apparently, each thread will have relatively average
   // size of test data
-  int cnt = 0;
+  decltype(test_size) cnt = 0;
   while (cnt < test_size) {
     uint64_t key = rand() % UINT64_MAX;
     thread_data[cnt % thread_num].push_back ({(const char*)key, 0});
@@ -146,19 +146,20 @@ void DoInsert() {
 
   double succ_ratio = (double)(test_size - fail_cnt) / test_size;
   double mem_use    = (double)(nvm_allocator->MemUsage()) / (1024 * 1024);
+  double kops       = (double)total_opts / 1000;
   std::cout << "[CCEH Finish Insertion]\n";
   std::cout << "--------------------------------------------------------------------------------------\n";
   std::cout << "|    Index   | Thread Number | Throughput(kops/s) | Success Ratio | Memory Usage(MB) |\n";
   std::cout << "--------------------------------------------------------------------------------------\n";
-  std::cout << "|                                                                                    |\n";
+  // std::cout << "|                                                                                    |\n";
   std::cout << "| " << std::setw(strlen("   Index  "))  << "CCEH"     << " | " 
             << std::setw(strlen("Thread Number"))       << thread_num << " | " 
-            << std::setw(strlen("Throughput(kops/s)"))  << total_opts << " | " 
+            << std::setw(strlen("Throughput(kops/s)"))  << kops       << " | " 
             << std::setw(strlen("Success Ratio"))       << succ_ratio << " | " 
             << std::setw(strlen("Memory Usage(MB)"))    << mem_use    << " |\n";
 
-  std::cout << "|                                                                                    |\n";
-  std::cout << "--------------------------------------------------------------------------------------\n";
+  // std::cout << "|                                                                                    |\n";
+  std::cout << "--------------------------------------------------------------------------------------\n\n";
 }
 
 
@@ -171,12 +172,14 @@ void DoSearch() {
 
     auto start = std::chrono::high_resolution_clock::now();
 
+    void *value;
+
     for (const auto &item : thread_data[thread_id]) {
       // The inserted value is the same of key
       // in order to make value check simple
-      PIE::status_code_t stat = test_index->Insert(
-        item.first, item.second, (void *)item.first);
-      if (stat != PIE::kOk) {
+      PIE::status_code_t stat = test_index->Search(
+        item.first, item.second, &value);
+      if (stat != PIE::kOk || value != (void *)(item.first)) {
         fail_time++;
       }
     }
@@ -210,18 +213,19 @@ void DoSearch() {
 
   double succ_ratio = (double)(test_size - fail_cnt) / test_size;
   double mem_use    = (double)(nvm_allocator->MemUsage()) / (1024 * 1024);
+  double kops       = (double)total_opts / 1000;
 
   std::cout << "[CCEH Finish Check]\n";
   std::cout << "--------------------------------------------------------------------------------------\n";
   std::cout << "|    Index   | Thread Number | Throughput(kops/s) | Success Ratio | Memory Usage(MB) |\n";
   std::cout << "--------------------------------------------------------------------------------------\n";
-  std::cout << "|                                                                                    |\n";
+  // std::cout << "|                                                                                    |\n";
   std::cout << "| " << std::setw(strlen("   Index  "))  << "CCEH"     << " | " 
             << std::setw(strlen("Thread Number"))       << thread_num << " | " 
-            << std::setw(strlen("Throughput(kops/s)"))  << total_opts << " | " 
+            << std::setw(strlen("Throughput(kops/s)"))  << kops       << " | " 
             << std::setw(strlen("Success Ratio"))       << succ_ratio << " | " 
             << std::setw(strlen("Memory Usage(MB)"))    << mem_use    << " |\n";
 
-  std::cout << "|                                                                                    |\n";
-  std::cout << "--------------------------------------------------------------------------------------\n";
+  // std::cout << "|                                                                                    |\n";
+  std::cout << "--------------------------------------------------------------------------------------\n\n";
 }

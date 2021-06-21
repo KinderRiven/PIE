@@ -46,10 +46,12 @@ namespace PIE {
         data = new uint8_t [rhs.Length() + sizeof(uint32_t)];
       }
       memcpy(data, rhs.data, rhs.Length() + sizeof(uint32_t));
+      return *this;
     }
 
     InternalString& operator= (uint64_t rhs) {
       data = reinterpret_cast<uint8_t*>(rhs);
+      return *this;
     }
 
     // Return the length of string;
