@@ -21,6 +21,16 @@ namespace PIE {
       memcpy(data+sizeof(uint32_t), str, len);
     }
 
+    // Copy outside memory into a location dst, dst is 
+    // managed by current created object.
+    // Note that this constructor does not check if space
+    // of dst is enough
+    InternalString(const char *str, size_t len, uint8_t* dst) {
+      data = dst;
+      *(uint32_t*)data = len;
+      memcpy(data+sizeof(uint32_t), str, len);
+    }
+
     ~InternalString() { delete data; }
 
     // Copyable Semantics
@@ -36,6 +46,10 @@ namespace PIE {
         data = new uint8_t [rhs.Length() + sizeof(uint32_t)];
       }
       memcpy(data, rhs.data, rhs.Length() + sizeof(uint32_t));
+    }
+
+    InternalString& operator= (uint64_t rhs) {
+      data = reinterpret_cast<uint8_t*>(rhs);
     }
 
     // Return the length of string;
@@ -99,6 +113,13 @@ namespace PIE {
 
     bool operator<=(const InternalString& rhs) const { 
       return compare(rhs) <= 0;
+    }
+
+    // For Convinience, we provide an comparator which
+    // compared with an integer, this comparator only 
+    // treat input parameter as an 8B integer
+    bool operator== (const uint64_t num) const {
+      return reinterpret_cast<uint64_t>(data) == num;
     }
 
   private:

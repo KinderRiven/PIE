@@ -1,5 +1,5 @@
-#ifndef PIE_SRC_INCLUDE_STATUS_H__
-#define PIE_SRC_INCLUDE_STATUS_H__
+#ifndef PIE_SRC_INCLUDE_STATUS_HPP__
+#define PIE_SRC_INCLUDE_STATUS_HPP__
 
 namespace PIE {
 

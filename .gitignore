@@ -30,3 +30,11 @@
 *.exe
 *.out
 *.app
+
+# project building directory
+build
+
+# Customized editor configurations
+.vscode
+.idea
+

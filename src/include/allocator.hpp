@@ -1,15 +1,19 @@
-#ifndef PIE_SRC_INCLUDE_ALLOCATOR_H__
-#define PIE_SRC_INCLUDE_ALLOCATOR_H__
+#ifndef PIE_SRC_INCLUDE_ALLOCATOR_HPP__
+#define PIE_SRC_INCLUDE_ALLOCATOR_HPP__
 
-#include "libpmem.h"
+#include "util/libpmem.h"
 
+#include <cstdio>
+#include <iostream>
+#include <iomanip>
 #include <cstdint>
 #include <cstdlib>
 #include <atomic>
-#include <cstdio>
-#include <iostream>
+#include <cassert>
 
 namespace PIE {
+
+  constexpr size_t cache_line_size = 64;
 
   // A simple abstract base class that provides
   // Allocate interface
@@ -28,7 +32,10 @@ namespace PIE {
     virtual void *AllocateAlign(size_t size, size_t alignment) = 0;
 
     // Print current memory usage
-    virtual void Print() = 0;
+    virtual void Print() const = 0;
+
+    // return more precise memory usage of Bytes
+    virtual uint64_t MemUsage() const = 0;
 
     virtual ~Allocator()=default;
   };
@@ -62,12 +69,16 @@ namespace PIE {
       ::free(addr);
     }
 
-    void Print() override {
+    void Print() const override {
       // Get & Print current memory usage
       std::cout << "[DRAM Allocator]\n"
                 << "[Usage: " 
                 << memory_usage_.load(std::memory_order_relaxed) / (1.0 * (1 << 20))
                 << "MB]\n";
+    }
+
+    uint64_t MemUsage() const override {
+      return memory_usage_.load(std::memory_order_relaxed);
     }
 
    private:
@@ -100,8 +111,8 @@ namespace PIE {
     // Allocate expeced memory size in aligned or unaligned region
     // If size >= CACHE_LINE_SIZE: allocate in aligned region
     void *Allocate(size_t size) override {
-      if (size >= CACHE_LINE_SIZE) {
-        return AllocateInAligned(size, CACHE_LINE_SIZE);
+      if (size >= cache_line_size) {
+        return AllocateInAligned(size, cache_line_size);
       } else {
         return AllocateInUnAligned(size);
       }
@@ -114,7 +125,7 @@ namespace PIE {
     // Append-only allocator is not able to deallocate memory
     void Free(void *addr) override { return; }
 
-    void Print() override {
+    void Print() const override {
       // Calculate usage proportion
       auto unaligned_proportion = static_cast<double>(
         unalignedregion_used_.load(std::memory_order_relaxed)) / unalignedregion_size_;
@@ -131,6 +142,11 @@ namespace PIE {
       std::cout << "[Aligned   Region][Base:" << static_cast<void*>(alignedregion_base_  )<< "]" 
                 << "[Usage: " <<   alignedregion_used_.load(std::memory_order_relaxed)
                 << "B" << "(" << std::setprecision(4) <<   aligned_proportion * 100 << "%)]\n";
+    }
+
+    uint64_t MemUsage() const override {
+      return unalignedregion_used_.load(std::memory_order_relaxed) 
+            +alignedregion_used_.load(std::memory_order_relaxed);
     }
 
    private:
