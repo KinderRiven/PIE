@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-06-22 16:07:03
- * @LastEditTime: 2021-06-22 19:41:46
+ * @LastEditTime: 2021-06-22 20:00:52
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /PIE/src/scheme/single/single_scheme.cpp
@@ -19,6 +19,7 @@ SingleScheme::SingleScheme(const Options& options)
 
 SingleScheme::~SingleScheme()
 {
+    printf("SingleScheme::~SingleScheme\n");
     delete index_;
 }
 
