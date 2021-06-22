@@ -1,7 +1,7 @@
 #ifndef PIE_SRC_INCLUDE_ALLOCATOR_HPP__
 #define PIE_SRC_INCLUDE_ALLOCATOR_HPP__
 
-#include "util/libpmem.h"
+#include "libpmem.h"
 
 #include <cstdio>
 #include <iostream>
