@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-06-22 16:18:12
- * @LastEditTime: 2021-06-22 19:52:08
+ * @LastEditTime: 2021-06-22 20:02:22
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /PIE/src/scheme.cc
@@ -20,4 +20,5 @@ Status Scheme::Create(const Options& options, Scheme** schemeptr)
 
 Scheme::~Scheme()
 {
+    printf("Scheme::~Scheme\n");
 }
