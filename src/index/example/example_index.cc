@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-06-22 18:50:26
- * @LastEditTime: 2021-06-22 19:28:53
+ * @LastEditTime: 2021-06-22 19:53:59
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /PIE/src/index/example/example_index.hpp
@@ -56,4 +56,9 @@ status_code_t ExampleIndex::Scan(const char* startkey, size_t startkey_len, cons
 {
     printf("ExampleIndex::Scan\n");
     return kOk;
+}
+
+void ExampleIndex::Print()
+{
+    printf("ExampleIndex::Print.\n");
 }
