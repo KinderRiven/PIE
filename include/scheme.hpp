@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-06-22 14:35:53
- * @LastEditTime: 2021-06-22 19:37:06
+ * @LastEditTime: 2021-06-22 20:05:08
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /PIE/include/scheme.hpp
@@ -32,9 +32,9 @@ public:
     virtual ~Scheme();
 
 private: // No copying allowed
-    Scheme(const Scheme&);
+    Scheme(const Scheme&) = delete;
 
-    void operator=(const Scheme&);
+    Scheme& operator=(const Scheme&) = delete;
 
 public:
     // Insert one key-value pair into index.
