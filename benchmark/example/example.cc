@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-06-22 19:43:54
- * @LastEditTime: 2021-06-22 19:48:09
+ * @LastEditTime: 2021-06-22 19:58:28
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /PIE/benchmark/example/example.cc
@@ -19,5 +19,6 @@ int main(int argc, char** argv)
     PIE::Slice _key;
     void* _value = nullptr;
     _scheme->Insert(_key, _value);
+    delete _scheme;
     return 0;
 }
