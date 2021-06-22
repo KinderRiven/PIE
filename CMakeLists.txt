@@ -8,7 +8,7 @@ set(SRC_BASE ${PROJECT_SOURCE_DIR})
 
 include_directories(
     ${SRC_BASE}/include
-    ${SRC_BASE}/utils
+    ${SRC_BASE}/util
     ${SRC_BASE}/src/include
     ${SRC_BASE}/src/index
     ${SRC_BASE}/src/scheme
