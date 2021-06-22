@@ -10,6 +10,7 @@ include_directories(
     ${SRC_BASE}/include
     ${SRC_BASE}/util
     ${SRC_BASE}/src
+    ${SRC_BASE}/src/include
 )
 
 set(SRC_ALLOCATOR
