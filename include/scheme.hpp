@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-06-22 14:35:53
- * @LastEditTime: 2021-06-22 16:47:09
+ * @LastEditTime: 2021-06-22 19:12:00
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /PIE/include/scheme.hpp
@@ -41,33 +41,33 @@ public:
     // Return kOk to indicate this insert operation success, otherwise
     // any non-ok code would indicate an error.
     // Note: kInsertExistKey would be considered tolerant
-    virtual Status Insert(Slice& key, void* value) = 0;
+    virtual Status Insert(const Slice& key, const void* value) = 0;
 
     // Search and return related value of given key
     // If the key does not exist in current index, kNotFound would
     // be returned, otherwise kOk is returned
-    virtual Status Search(Slice& key, void** value) = 0;
+    virtual Status Search(const Slice& key, void** value) = 0;
 
     // Update specified key with given value.
     // If the key does not exist in current index, kNotFound would
     // be returned, otherwise return kOk if update success
-    virtual Status Update(Slice& key, void* value) = 0;
+    virtual Status Update(const Slice& key, const void* value) = 0;
 
     // Update specified key with given value if target key exists
     // otherwise insert target key-value pair.
     // This interface always return kOk unless memory allocation error
     // occurs
-    virtual Status Upsert(Slice& key, void* value) = 0;
+    virtual Status Upsert(const Slice& key, const void* value) = 0;
 
     // Scan from start key and return its "count" successors
     // Coresponding values are placed in a void* array specified by "vec"
     // However, values are not guaranteed to be SORTED;
-    virtual Status ScanCount(Slice& startkey, size_t count, void** vec) = 0;
+    virtual Status ScanCount(const Slice& startkey, size_t count, void** vec) = 0;
 
     // Scan to fetch keys within the range [startkey, endkey);
     // Coresponding values are placed in a void* array specified by "vec"
     // However, values are not guaranteed to be SORTED;
-    virtual Status Scan(Slice& startkey, Slice& endkey, void** vec) = 0;
+    virtual Status Scan(const Slice& startkey, const Slice& endkey, void** vec) = 0;
 
     // Printout Any related index message:
     // such as the height of B+Tree or max height of radix tree

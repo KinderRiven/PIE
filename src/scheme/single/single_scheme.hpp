@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-06-22 15:23:31
- * @LastEditTime: 2021-06-22 16:43:43
+ * @LastEditTime: 2021-06-22 19:09:03
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /PIE/src/include/single_scheme.hpp
@@ -10,6 +10,7 @@
 #ifndef PIE_SRC_SCHEME_SINGLE_SINGLE_SCHEME_HPP__
 #define PIE_SRC_SCHEME_SINGLE_SINGLE_SCHEME_HPP__
 
+#include "index.hpp"
 #include "scheme.hpp"
 
 namespace PIE {
@@ -56,6 +57,9 @@ public:
     // such as the height of B+Tree or max height of radix tree
     // The bucket/slot number of hash table
     void Print();
+
+private:
+    Index* index_;
 };
 };
 
