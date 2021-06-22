@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-06-22 15:23:31
- * @LastEditTime: 2021-06-22 19:33:11
+ * @LastEditTime: 2021-06-22 19:37:24
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /PIE/src/include/single_scheme.hpp
@@ -25,7 +25,7 @@ public:
     // Return kOk to indicate this insert operation success, otherwise
     // any non-ok code would indicate an error.
     // Note: kInsertExistKey would be considered tolerant
-    Status Insert(const Slice& key, const void* value);
+    Status Insert(const Slice& key, void* value);
 
     // Search and return related value of given key
     // If the key does not exist in current index, kNotFound would
@@ -35,13 +35,13 @@ public:
     // Update specified key with given value.
     // If the key does not exist in current index, kNotFound would
     // be returned, otherwise return kOk if update success
-    Status Update(const Slice& key, const void* value);
+    Status Update(const Slice& key, void* value);
 
     // Update specified key with given value if target key exists
     // otherwise insert target key-value pair.
     // This interface always return kOk unless memory allocation error
     // occurs
-    Status Upsert(const Slice& key, const void* value);
+    Status Upsert(const Slice& key, void* value);
 
     // Scan from start key and return its "count" successors
     // Coresponding values are placed in a void* array specified by "vec"
