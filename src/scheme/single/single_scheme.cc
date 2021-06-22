@@ -1,14 +1,14 @@
 /*
  * @Author: your name
  * @Date: 2021-06-22 16:07:03
- * @LastEditTime: 2021-06-22 19:37:35
+ * @LastEditTime: 2021-06-22 19:41:46
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /PIE/src/scheme/single/single_scheme.cpp
  */
 
 #include "single_scheme.hpp"
-#include "example/example_index.hpp"
+#include "index/example/example_index.hpp"
 
 using namespace PIE;
 
