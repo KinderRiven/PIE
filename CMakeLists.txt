@@ -18,6 +18,7 @@ set(SRC_ALLOCATOR
 
 set(SRC_INDEX
     ${SRC_BASE}/src/index/CCEH/CCEH_MSB.cc
+    ${SRC_BASE}/src/index/example/example_index.cc
 )
 
 set(SRC_UTILS
