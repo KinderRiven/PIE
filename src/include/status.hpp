@@ -17,8 +17,8 @@ namespace PIE {
       "kNotDefined", "kNeedSplit"
     };
 
-    if (code < sizeof(codestring) / sizeof(char *)) {
-      return codestring[code];
+    if (code < sizeof(codestring) / sizeof(char*)) {
+        return codestring[code];
     }
     return "";
   }
