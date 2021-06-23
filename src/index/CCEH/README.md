@@ -28,9 +28,10 @@ Apparently we use the string version by default. To enable integer key test, ple
 
 ## Features
 
-| Features        |    Description                                                                                     | Support   |
-|-----------------|----------------------------------------------------------------------------------------------------|-----------| 
-| Integer key     |    Key is identified by 8B integer                                                                 | √         |
-| String  key     |    Key is identified with string start(``const char *``) and its length(``size_t``)                | √         |
-| Multi-Thread    |    Data structure operation is thread-safe                                                         | √         |
-| Unique-key check|    Return error if insert existed key                                                              | ×         |
+| Features        |    Description                                                                                     | Support |
+|-----------------|----------------------------------------------------------------------------------------------------|---------| 
+| Integer key     |    Key is identified by 8B integer                                                                 | √       |
+| String  key     |    Key is identified with string start(``const char *``) and its length(``size_t``)                | √       |
+| Multi-Thread    |    Data structure operation is thread-safe                                                         | √       |
+| Unique-key check|    Return error if insert existed key                                                              | ×       |
+| PMDK            |    Use pmdk library                                                                                | ×       |
