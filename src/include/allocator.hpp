@@ -177,7 +177,7 @@ inline PIENVMAllocator::PIENVMAllocator(const char *poolfile, size_t filesize) {
   int is_pmem;
 
   // Check if pool file is opened correctly
-  auto base = pmem_map_file(poolfile, 0, 0, 0666, &mapped_len, &is_pmem);
+  auto base = pmem_map_file(poolfile, filesize, PMEM_FILE_CREATE, 0666, &mapped_len, &is_pmem);
   if (is_pmem != 1) {
     std::cerr << "[PIENVMAllocator: Faild to open poolfile: " << poolfile
               << " ]\n";
