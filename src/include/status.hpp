@@ -18,7 +18,7 @@ namespace PIE {
     };
 
     if (code < sizeof(codestring) / sizeof(char*)) {
-        return codestring[code];
+      return codestring[code];
     }
     return "";
   }
