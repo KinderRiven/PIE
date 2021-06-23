@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-06-22 16:07:03
- * @LastEditTime: 2021-06-23 14:09:44
+ * @LastEditTime: 2021-06-23 20:37:01
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /PIE/src/scheme/single/single_scheme.cpp
@@ -19,7 +19,7 @@ SingleScheme::SingleScheme(const Options& options)
         index_ = new example::ExampleIndex();
     } else if (options.index_type == kCCEH) {
         nvm_allocator_ = new PIENVMAllocator(options.pmem_file_path.c_str(), options.pmem_file_size);
-        index_ = new CCEH::CCEHIndex(nvm_allocator_);
+        index_ = new CCEH::CCEHIndex(nvm_allocator_, 16);
     }
 }
 
