@@ -26,6 +26,7 @@ set(SRC_UTILS
 
 set(SRC_SCHEME
     ${SRC_BASE}/src/scheme.cc
+    ${SRC_BASE}/src/status.cc
     ${SRC_BASE}/src/scheme/single/single_scheme.cc
 )
 
