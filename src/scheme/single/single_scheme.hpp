@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-06-22 15:23:31
- * @LastEditTime: 2021-06-22 19:37:24
+ * @LastEditTime: 2021-06-23 14:02:09
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /PIE/src/include/single_scheme.hpp
@@ -10,6 +10,7 @@
 #ifndef PIE_SRC_SCHEME_SINGLE_SINGLE_SCHEME_HPP__
 #define PIE_SRC_SCHEME_SINGLE_SINGLE_SCHEME_HPP__
 
+#include "allocator.hpp"
 #include "index.hpp"
 #include "scheme.hpp"
 
@@ -60,6 +61,10 @@ public:
 
 private:
     Index* index_;
+
+    Allocator* nvm_allocator_;
+
+    Allocator* dram_allocator_;
 };
 };
 

@@ -3,24 +3,25 @@
 
 namespace PIE {
 
-  enum status_code_t {
+enum status_code_t {
     kOk = 0,
     kInsertKeyExist = 1,
     kNotFound = 2,
     kNotDefined = 3
-  };
+};
 
-  inline const char *StatusString(status_code_t code) {
-    static const char *codestring[] = {
-      "kOk", "kInsertKeyExist", "kNotFound",
-      "kNotDefined"
+inline const char* StatusString(status_code_t code)
+{
+    static const char* codestring[] = {
+        "kOk", "kInsertKeyExist", "kNotFound",
+        "kNotDefined"
     };
 
-    if (code < sizeof(codestring) / sizeof(char *)) {
-      return codestring[code];
+    if (code < sizeof(codestring) / sizeof(char*)) {
+        return codestring[code];
     }
     return "";
-  }
+}
 
 }
 
