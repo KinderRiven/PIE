@@ -31,6 +31,12 @@ namespace PIE {
       memcpy(data+sizeof(uint32_t), str, len);
     }
 
+    // Receive a raw 8B value and treat it as a pointer
+    // pointing to a memory position
+    InternalString(uint64_t dst) {
+      data = reinterpret_cast<uint8_t*>(dst);
+    }
+
     // TODO: Is it a good idea not to deallocate
     // memory of InternalString?
     // ~InternalString() { delete data; }
@@ -52,6 +58,14 @@ namespace PIE {
       return *this;
     }
 
+    InternalString& operator= (InternalString&& rhs) {
+      if (this->data == rhs.data) { return *this; }
+      delete data;
+      data = rhs.data;
+      rhs.data = nullptr;
+      return *this;
+    }
+
     InternalString& operator= (uint64_t rhs) {
       data = reinterpret_cast<uint8_t*>(rhs);
       return *this;
@@ -68,7 +82,7 @@ namespace PIE {
 
     // Return the nth Byte of target string array
     // make sure the index is inside the array range
-    uint8_t operator[](size_t n) {
+    uint8_t operator[](size_t n) const {
       return *(data + sizeof(uint32_t) + n);  // increase 4 to skip length field
     }
 

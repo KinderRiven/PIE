@@ -1,6 +1,6 @@
-// A simple correctness test for CCEH
+// A simple correctness test for RHTree
 
-#include "CCEH_MSB.hpp"
+#include "rhtree.hpp"
 
 #include <thread>
 #include <vector>
@@ -38,15 +38,12 @@ using testpair = std::pair<const char *, size_t>;
 std::vector<testpair> thread_data [max_thread_num];
 
 // Evaluation index for insert & search operation
-PIE::Allocator *nvm_allocator;
+PIE::Allocator *nvm_allocator, *dram_allocator;
 PIE::Index *test_index;
 
 // To record each thread running performance
 ThreadResults thread_results [max_thread_num];
 std::thread   threads[max_thread_num];
-
-
-
 
 void InitTest();
 void DoInsert();
@@ -94,7 +91,9 @@ void InitTest() {
 
   // Create new index for test
   nvm_allocator = new PIE::PIENVMAllocator(pmem_file, pmem_size);
-  test_index = new PIE::CCEH::CCEHIndex (nvm_allocator, 16);
+  dram_allocator = new PIE::PIEDRAMAllocator();
+  
+  test_index = new PIE::RHTREE::RHTreeIndex (dram_allocator, nvm_allocator);
 
   // generate test data;
   // Apparently, each thread will have relatively average
@@ -163,12 +162,12 @@ void DoInsert() {
   double succ_ratio = (double)(test_size - fail_cnt) / test_size;
   double mem_use    = (double)(nvm_allocator->MemUsage()) / (1024 * 1024);
   double kops       = (double)total_opts / 1000;
-  std::cout << "[CCEH Finish Insertion]\n";
+  std::cout << "[RHTree Finish Insertion]\n";
   std::cout << "--------------------------------------------------------------------------------------\n";
   std::cout << "|    Index   | Thread Number | Throughput(kops/s) | Success Ratio | Memory Usage(MB) |\n";
   std::cout << "--------------------------------------------------------------------------------------\n";
   // std::cout << "|                                                                                    |\n";
-  std::cout << "| " << std::setw(strlen("   Index  "))  << "CCEH"     << " | " 
+  std::cout << "| " << std::setw(strlen("   Index  "))  << "RHTREE"   << " | " 
             << std::setw(strlen("Thread Number"))       << thread_num << " | " 
             << std::setw(strlen("Throughput(kops/s)"))  << kops       << " | " 
             << std::setw(strlen("Success Ratio"))       << succ_ratio << " | " 
@@ -232,12 +231,12 @@ void DoSearch() {
   double mem_use    = (double)(nvm_allocator->MemUsage()) / (1024 * 1024);
   double kops       = (double)total_opts / 1000;
 
-  std::cout << "[CCEH Finish Check]\n";
+  std::cout << "[RHTree Finish Check]\n";
   std::cout << "--------------------------------------------------------------------------------------\n";
   std::cout << "|    Index   | Thread Number | Throughput(kops/s) | Success Ratio | Memory Usage(MB) |\n";
   std::cout << "--------------------------------------------------------------------------------------\n";
   // std::cout << "|                                                                                    |\n";
-  std::cout << "| " << std::setw(strlen("   Index  "))  << "CCEH"     << " | " 
+  std::cout << "| " << std::setw(strlen("   Index  "))  << "RHTREE"   << " | " 
             << std::setw(strlen("Thread Number"))       << thread_num << " | " 
             << std::setw(strlen("Throughput(kops/s)"))  << kops       << " | " 
             << std::setw(strlen("Success Ratio"))       << succ_ratio << " | " 
@@ -250,7 +249,7 @@ void DoSearch() {
 // randomly generate a string key
 static const char *generate_string() {
   char *ret = new char [key_len];
-  auto cnt = decltype(key_len){0};
+  decltype(key_len) cnt = 0;
   // randomly write data
   while (cnt++ < key_len) {
     auto idx = rand() % key_len;

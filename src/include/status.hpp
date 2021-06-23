@@ -7,13 +7,14 @@ namespace PIE {
     kOk = 0,
     kInsertKeyExist = 1,
     kNotFound = 2,
-    kNotDefined = 3
+    kNotDefined = 3,
+    kNeedSplit = 4  // Used for any index has "split" operation
   };
 
   inline const char *StatusString(status_code_t code) {
     static const char *codestring[] = {
       "kOk", "kInsertKeyExist", "kNotFound",
-      "kNotDefined"
+      "kNotDefined", "kNeedSplit"
     };
 
     if (code < sizeof(codestring) / sizeof(char *)) {
