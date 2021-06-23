@@ -1,6 +1,8 @@
 #ifndef PIE_SRC_INDEX_RHTREE_RHTREE_HPP__
 #define PIE_SRC_INDEX_RHTREE_RHTREE_HPP__
 
+#include <iostream>
+
 #include "rhtreenode.hpp"
 
 namespace PIE {
@@ -52,7 +54,10 @@ class RHTreeIndex : public Index {
                      void **vec) override;
 
   void Print() override {
-    // TODO
+    std::cout << "[INode Size: " << sizeof(InternalNode) << "]"
+              << "[Leaf Size: " << sizeof(LeafNode) << "]\n"
+              << "[Leaf is cacheline Aligned: "
+              << (sizeof(LeafNode) % kCacheLineSize == 0) << "]\n";
   }
 
  private:

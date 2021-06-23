@@ -225,9 +225,9 @@ class CCEHIndex : public Index {
   }
 
   CCEHIndex(Allocator *nvm_allocator) : nvm_allocator_(nvm_allocator) {
-    dir = AllocDirectory(0);
+    dir = AllocDirectory(1);
     for (unsigned i = 0; i < dir->capacity; ++i) {
-      dir->_[i] = AllocSegment(0);
+      dir->_[i] = AllocSegment(1);
     }
   }
 
