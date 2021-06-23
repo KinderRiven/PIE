@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-06-22 15:27:31
- * @LastEditTime: 2021-06-23 14:04:06
+ * @LastEditTime: 2021-06-23 14:49:04
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /PIE/include/options.hpp
@@ -9,6 +9,8 @@
 
 #ifndef PIE_INCLUDE_OPTIONS_HPP__
 #define PIE_INCLUDE_OPTIONS_HPP__
+
+#include <string>
 
 namespace PIE {
 enum index_type_t {
