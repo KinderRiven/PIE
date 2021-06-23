@@ -1,15 +1,14 @@
 #ifndef PIE_UTIL_INTERNAL_STRING_H__
 #define PIE_UTIL_INTERNAL_STRING_H__
 
+#include <algorithm>
+#include <cassert>
+#include <cstddef>
 #include <cstdint>
 #include <cstdlib>
-#include <cstddef>
 #include <cstring>
-#include <cassert>
-#include <algorithm>
 
 namespace PIE {
-
     class InternalString {
 
     public:
@@ -167,6 +166,5 @@ namespace PIE {
     private:
         uint8_t *data;
     };
-
-};
+}
 #endif
