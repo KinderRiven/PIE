@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-06-22 15:23:31
- * @LastEditTime: 2021-06-23 14:02:09
+ * @LastEditTime: 2021-06-23 15:05:30
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /PIE/src/include/single_scheme.hpp
@@ -13,6 +13,7 @@
 #include "allocator.hpp"
 #include "index.hpp"
 #include "scheme.hpp"
+#include "status.hpp"
 
 namespace PIE {
 class SingleScheme : public Scheme {
