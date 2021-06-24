@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-06-22 16:07:03
- * @LastEditTime: 2021-06-24 10:20:30
+ * @LastEditTime: 2021-06-24 11:15:14
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /PIE/src/scheme/single/single_scheme.cpp
@@ -16,8 +16,10 @@ using namespace PIE;
 SingleScheme::SingleScheme(const Options& options)
 {
     if (options.index_type == kExampleIndex) {
+        std::cout << "[SingleScheme::SingleScheme - example::ExampleIndex]" << std::endl;
         index_ = new example::ExampleIndex();
     } else if (options.index_type == kCCEH) {
+        std::cout << "[SingleScheme::SingleScheme - CCEH::CCEHIndex]" << std::endl;
         nvm_allocator_ = new PIENVMAllocator(options.pmem_file_path.c_str(), options.pmem_file_size);
         index_ = new CCEH::CCEHIndex(nvm_allocator_, 16);
     }
