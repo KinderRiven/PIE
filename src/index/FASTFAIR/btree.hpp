@@ -1022,8 +1022,13 @@ class FASTFAIRTree : public Index {
 
     status_code_t Insert(const char *key, size_t key_len,
                          void *value) override {
-        auto des = allocator->Allocate(key_len);
+#ifdef STRINGKEY
+        auto des = allocator->Allocate(key_len + sizeof(uint32_t));
         InternalString str(key, key_len, (uint8_t *)des);
+#else
+        auto str = (uint64_t)key;
+#endif
+
         return tree.btree_insert(str, (char *)value);
     }
 
