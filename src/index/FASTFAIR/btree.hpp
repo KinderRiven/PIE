@@ -1000,7 +1000,7 @@ void btree::printAll() {
     pthread_mutex_unlock(&print_mtx);
 }
 
-class FASTFAIRTree : Index {
+class FASTFAIRTree : public Index {
   public:
     FASTFAIRTree(Allocator *allocator_)
         : tree(allocator_), allocator(allocator_){};

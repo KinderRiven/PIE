@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-06-22 15:27:31
- * @LastEditTime: 2021-06-23 21:20:34
+ * @LastEditTime: 2021-06-24 13:11:19
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /PIE/include/options.hpp
@@ -16,6 +16,8 @@ namespace PIE {
 enum index_type_t {
     kExampleIndex = 0,
     kCCEH = 1,
+    kRHTREE = 2,
+    kFASTFAIR = 3,
 };
 
 enum scheme_type_t {
