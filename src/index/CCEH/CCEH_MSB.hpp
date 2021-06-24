@@ -28,7 +28,7 @@ namespace CCEH {
 //    CCEH is originally designed to deal with such case
 //
 //  Value: void *;
-#ifdef STRINGKEY
+#ifdef CCEH_STRINGKEY
 #define CCEH_Key_t InternalString
 #define ConvertToCCEHKey(key, len, dst) InternalString((key), (len), (dst))
 #else

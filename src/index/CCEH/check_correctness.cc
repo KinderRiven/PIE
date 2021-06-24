@@ -104,7 +104,7 @@ void InitTest() {
   // size of test data
   decltype(test_size) cnt = 0;
   while (cnt < test_size) {
-#ifdef STRINGKEY
+#ifdef CCEH_STRINGKEY
     const char *key = generate_string();
 #else
     uint64_t key = rand() % UINT64_MAX;

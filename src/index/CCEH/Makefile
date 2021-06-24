@@ -6,7 +6,7 @@ TARGET		= test
 ROOT			= ../../..
 INCLUDE		= -I$(ROOT)/util	-I$(ROOT)/src/include -I$(ROOT)
 CLIB			= -lpthread -lpmem
-KEYTYPE   = -DSTRINGKEY
+KEYTYPE   = -DCCEH_STRINGKEY
 
 
 $(TARGET): clean
