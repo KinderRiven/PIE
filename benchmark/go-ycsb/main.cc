@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-04-17 11:58:39
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2021-06-24 20:07:35
+ * @LastEditTime: 2021-06-24 20:08:23
  * @FilePath: /SplitKV/benchmark/go-ycsb/rocksdb_main.cc
  */
 
@@ -238,7 +238,7 @@ static void run_thread(thread_context_t* context)
     for (auto __iter = _vec_opt->begin(); __iter != _vec_opt->end(); __iter++) {
         ycsb_operator_t* __operator = *(__iter);
         char* __key = new char[kKeySize];
-        char* __value = nullptr;
+        void* __value = nullptr;
         generator_kv(__operator->skew_, __key, __value);
         if (__operator->type_ == OPT_TYPE_INSERT) {
             Slice __skey(__key, kKeySize);
