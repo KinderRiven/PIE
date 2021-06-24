@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-06-22 16:07:03
- * @LastEditTime: 2021-06-24 13:25:00
+ * @LastEditTime: 2021-06-24 19:11:45
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /PIE/src/scheme/single/single_scheme.cpp
@@ -9,7 +9,7 @@
 
 #include "single_scheme.hpp"
 #include "index/CCEH/CCEH_MSB.hpp"
-#include "index/FastFair/btree.hpp"
+#include "index/FASTFAIR/btree.hpp"
 #include "index/RHTREE/rhtree.hpp"
 #include "index/example/example_index.hpp"
 
