@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-04-17 11:58:39
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2021-06-24 20:11:38
+ * @LastEditTime: 2021-06-24 20:15:25
  * @FilePath: /SplitKV/benchmark/go-ycsb/rocksdb_main.cc
  */
 
@@ -212,12 +212,13 @@ void read_ycsb_file(const char* name)
 
 static void run_thread(thread_context_t* context)
 {
-    uint32_t _insert_cnt = 0;
-    uint32_t _update_cnt = 0;
-    uint32_t _read_cnt = 0;
-    uint32_t _read_ok_cnt = 0;
+    uint64_t _insert_cnt = 0;
+    uint64_t _update_cnt = 0;
+    uint64_t _search_cnt = 0;
+    uint64_t _insert_ok_cnt = 0;
+    uint64_t _update_ok_cnt = 0;
+    uint64_t _search_ok_cnt = 0;
 
-    size_t _value_length;
     Scheme* _scheme = context->scheme;
     std::vector<ycsb_operator_t*>* _vec_opt = context->vec_opt;
 
@@ -231,26 +232,33 @@ static void run_thread(thread_context_t* context)
         if (__operator->type_ == OPT_TYPE_INSERT) {
             Slice __skey(__operator->skew_);
             __value = (void*)(*((uint64_t*)__skey.data()));
-            Status __status = _scheme->Insert(__skey, __value));
+            Status __status = _scheme->Insert(__skey, __value);
             _insert_cnt++;
+            if (__status.OK()) {
+                _insert_ok_cnt++;
+            }
         } else if (__operator->type_ == OPT_TYPE_UPDATE) {
             Slice __skey(__operator->skew_);
             __value = (void*)(*((uint64_t*)__skey.data()));
-            Status __status = _scheme->Update(__skey, __value));
+            Status __status = _scheme->Update(__skey, __value);
             _update_cnt++;
+            if (__status.OK()) {
+                _update_ok_cnt++;
+            }
         } else if (__operator->type_ == OPT_TYPE_READ) {
             Slice __skey(__operator->skew_);
             __value = (void*)(*((uint64_t*)__skey.data()));
             Status __status = _scheme->Search(__skey, &__value);
-            _read_cnt++;
+            _search_cnt++;
             if (__status.ok()) {
-                _read_ok_cnt++;
+                _search_ok_cnt++;
             }
         }
     }
     _timer.Stop();
-    printf("[cost:%.2fseconds][iops:%.2f][insert/update:%llu/%llu][read:%llu/%llu]\n",
-        _timer.GetSeconds(), 1.0 * _vec_opt->size() / _timer.GetSeconds(), _insert_cnt, _update_cnt, _read_ok_cnt, _read_cnt);
+    printf("[cost:%.2fseconds][iops:%.2f][insert:%llu/%llu][update:%llu/%llu][search:%llu/%llu]\n",
+        _timer.GetSeconds(), 1.0 * _vec_opt->size() / _timer.GetSeconds(),
+        _insert_cnt, _insert_ok_cnt, _update_cnt, _update_ok_cnt, _search_cnt, _search_ok_cnt);
 }
 
 void run_workload(const char* ycsb, Scheme* scheme)
