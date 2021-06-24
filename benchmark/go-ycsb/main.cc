@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-04-17 11:58:39
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2021-06-24 20:10:54
+ * @LastEditTime: 2021-06-24 20:11:38
  * @FilePath: /SplitKV/benchmark/go-ycsb/rocksdb_main.cc
  */
 
@@ -34,10 +34,10 @@
 #include <unistd.h>
 #include <vector>
 
-#include "timer.h"
 #include "options.hpp"
 #include "scheme.hpp"
 #include "slice.hpp"
+#include "timer.h"
 
 using namespace PIE;
 
@@ -230,26 +230,23 @@ static void run_thread(thread_context_t* context)
         void* __value = nullptr;
         if (__operator->type_ == OPT_TYPE_INSERT) {
             Slice __skey(__operator->skew_);
-            __value = (void *)(*((uint64_t*)__skey.data()));
+            __value = (void*)(*((uint64_t*)__skey.data()));
             Status __status = _scheme->Insert(__skey, __value));
             _insert_cnt++;
-            delete __value;
         } else if (__operator->type_ == OPT_TYPE_UPDATE) {
             Slice __skey(__operator->skew_);
-            __value = (void *)(*((uint64_t*)__skey.data()));
+            __value = (void*)(*((uint64_t*)__skey.data()));
             Status __status = _scheme->Update(__skey, __value));
             _update_cnt++;
-            delete __value;
         } else if (__operator->type_ == OPT_TYPE_READ) {
             Slice __skey(__operator->skew_);
-            __value = (void *)(*((uint64_t*)__skey.data()));
+            __value = (void*)(*((uint64_t*)__skey.data()));
             Status __status = _scheme->Search(__skey, &__value);
             _read_cnt++;
             if (__status.ok()) {
                 _read_ok_cnt++;
             }
         }
-        delete __key;
     }
     _timer.Stop();
     printf("[cost:%.2fseconds][iops:%.2f][insert/update:%llu/%llu][read:%llu/%llu]\n",
