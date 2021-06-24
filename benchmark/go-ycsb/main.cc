@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-04-17 11:58:39
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2021-06-24 20:34:48
+ * @LastEditTime: 2021-06-24 20:36:31
  * @FilePath: /SplitKV/benchmark/go-ycsb/rocksdb_main.cc
  */
 
@@ -41,8 +41,7 @@
 
 using namespace PIE;
 
-const static uint32_t kNumThread = 8;
-const static uint32_t kKeySize = 20;
+const static uint32_t kNumThread = 1;
 
 #define OPT_TYPE_INSERT (1)
 #define OPT_TYPE_UPDATE (2)
