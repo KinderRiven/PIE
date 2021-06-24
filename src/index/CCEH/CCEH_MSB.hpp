@@ -14,7 +14,6 @@
 #include "internal_string.h"
 #include "persist.h"
 
-#define CCEH_STRINGKEY
 #define f_seed 0xc70697UL
 #define s_seed 0xc70697UL
 
