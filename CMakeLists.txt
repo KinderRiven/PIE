@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 2.8)
 project(PIE)
 
 set (CMAKE_CXX_FLAGS "-O3 -std=c++17 -mrtm")
-
+set (CMAKE_CXX_FALGS ${CMAKE_CXX_FLAGS} "-DSTRINGKEY")
 set(SRC_BASE ${PROJECT_SOURCE_DIR})
 
 include_directories(
