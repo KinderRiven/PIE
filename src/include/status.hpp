@@ -8,7 +8,8 @@ enum status_code_t {
   kInsertKeyExist = 1,
   kNotFound = 2,
   kNotDefined = 3,
-  kNeedSplit = 4  // Used for any index has "split" operation
+  kNeedSplit = 4,  // Used for any index has "split" operation
+  kFailed = 5
 };
 
 inline const char *StatusString(status_code_t code) {

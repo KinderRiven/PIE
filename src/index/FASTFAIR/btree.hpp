@@ -13,22 +13,22 @@
 
 #include <cassert>
 #include <climits>
-#include <fstream>
-#include <future>
-#include <iostream>
 #include <cmath>
-#include <mutex>
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <ctime>
+#include <fstream>
+#include <future>
+#include <iostream>
+#include <mutex>
 #include <unistd.h>
 #include <vector>
 
 #include "../../../util/internal_string.h"
-#include "../../include/index.hpp"
 #include "../../include/allocator.hpp"
+#include "../../include/index.hpp"
 
 // to silence warnings
 #define UNUSED(x) ((void)(x))
@@ -50,19 +50,22 @@ using entry_key_t = PIE::InternalString;
 using entry_key_t = int64_t;
 #endif
 
+namespace PIE {
+namespace FASTFAIR {
+
 pthread_mutex_t print_mtx;
 
 /*
-static inline void cpu_pause() { __asm__ volatile("pause" ::: "memory"); }
-static inline unsigned long read_tsc(void) {
-    unsigned long var;
-    unsigned int hi, lo;
+  static inline void cpu_pause() { __asm__ volatile("pause" ::: "memory"); }
+  static inline unsigned long read_tsc(void) {
+  unsigned long var;
+  unsigned int hi, lo;
 
-    asm volatile("rdtsc" : "=a"(lo), "=d"(hi));
-    var = ((unsigned long long int)hi << 32) | lo;
+  asm volatile("rdtsc" : "=a"(lo), "=d"(hi));
+  var = ((unsigned long long int)hi << 32) | lo;
 
-    return var;
-}
+  return var;
+  }
 */
 
 unsigned long write_latency_in_ns = 0;
@@ -89,28 +92,30 @@ inline void clflush(char *data, int len) {
 class page;
 
 class btree {
-private:
+  private:
     int height;
     char *root;
     PIE::Allocator *allocator;
-public:
-    btree();
+
+  public:
+    btree(PIE::Allocator *);
     void setNewRoot(char *);
     void getNumberOfNodes();
-    void btree_insert(const entry_key_t &, char *);
+    status_code_t btree_insert(const entry_key_t &, char *);
     void btree_insert_internal(char *, const entry_key_t &, char *, uint32_t);
-    void btree_delete(const entry_key_t&);
-    void btree_delete_internal(const entry_key_t &, char *, uint32_t, entry_key_t *,
-                               bool *, page **);
+    status_code_t btree_delete(const entry_key_t &);
+    void btree_delete_internal(const entry_key_t &, char *, uint32_t,
+                               entry_key_t *, bool *, page **);
     char *btree_search(const entry_key_t &);
-    void btree_search_range(const entry_key_t &, const entry_key_t &, unsigned long *);
+    status_code_t btree_search_range(const entry_key_t &, const entry_key_t &,
+                                     void **);
     void printAll();
 
     friend class page;
 };
 
 class header {
-private:
+  private:
     page *leftmost_ptr;     // 8 bytes
     page *sibling_ptr;      // 8 bytes
     uint32_t level;         // 4 bytes
@@ -122,7 +127,7 @@ private:
     friend class page;
     friend class btree;
 
-public:
+  public:
     header() {
         mtx = new std::mutex();
 
@@ -137,14 +142,12 @@ public:
 };
 
 class entry {
-private:
+  private:
     entry_key_t key; // 8 bytes
     char *ptr;       // 8 bytes
 
-public:
-    entry() : ptr() {
-        key = 0ULL;
-    }
+  public:
+    entry() : ptr() { key = 0ULL; }
 
     friend class page;
     friend class btree;
@@ -154,7 +157,7 @@ const int cardinality = (PAGESIZE - sizeof(header)) / sizeof(entry);
 // const int count_in_line = CACHE_LINE_SIZE / sizeof(entry);
 
 class page {
-private:
+  private:
     header hdr;                 // header in persistent memory, 16 bytes
     entry records[cardinality]; // slots in persistent memory, 16 bytes * n
 
@@ -164,14 +167,14 @@ private:
         return p;
     }
 
-    page *new_page(PIE::Allocator *allocator, page *left, entry_key_t key, page *right, uint32_t level = 0) {
+    page *new_page(PIE::Allocator *allocator, page *left, entry_key_t key,
+                   page *right, uint32_t level = 0) {
         page *p = (page *)allocator->Allocate(sizeof(page));
         p->init(left, key, right, level);
         return p;
     }
 
-
-public:
+  public:
     friend class btree;
 
     void init(uint32_t level = 0) {
@@ -252,7 +255,8 @@ public:
                 int remainder = records_ptr % CACHE_LINE_SIZE;
                 bool do_flush =
                     (remainder == 0) ||
-                    ((((int)(remainder + sizeof(entry)) / CACHE_LINE_SIZE) == 1) &&
+                    ((((int)(remainder + sizeof(entry)) / CACHE_LINE_SIZE) ==
+                      1) &&
                      ((remainder + sizeof(entry)) % CACHE_LINE_SIZE) != 0);
                 if (do_flush) {
                     clflush((char *)records_ptr, CACHE_LINE_SIZE);
@@ -280,17 +284,18 @@ public:
     }
 
     /*
-     * Although we implemented the rebalancing of B+-Tree, it is currently blocked
-     * for the performance. Please refer to the follow. Chi, P., Lee, W. C., &
-     * Xie, Y. (2014, August). Making B+-tree efficient in PCM-based main memory.
-     * In Proceedings of the 2014 international symposium on Low power electronics
-     * and design (pp. 69-74). ACM.
+     * Although we implemented the rebalancing of B+-Tree, it is currently
+     * blocked for the performance. Please refer to the follow. Chi, P., Lee, W.
+     * C., & Xie, Y. (2014, August). Making B+-tree efficient in PCM-based main
+     * memory. In Proceedings of the 2014 international symposium on Low power
+     * electronics and design (pp. 69-74). ACM.
      *
      * PIE: since this function is never called, we remove it for clear code
      */
     /*
-    bool remove_rebalancing(btree *bt, entry_key_t key, bool only_rebalance = false, bool with_lock = true) {
-    }
+      bool remove_rebalancing(btree *bt, entry_key_t key, bool only_rebalance =
+      false, bool with_lock = true) {
+      }
     */
 
     inline void insert_key(const entry_key_t &key, char *ptr, int *num_entries,
@@ -303,7 +308,7 @@ public:
         if (*num_entries == 0) { // this page is empty
             entry *new_entry = (entry *)&records[0];
             entry *array_end = (entry *)&records[1];
-#ifdef STRINGKEY            
+#ifdef STRINGKEY
             new_entry->key.BorrowFrom(key);
 #else
             new_entry->key = key;
@@ -319,28 +324,31 @@ public:
             int i = *num_entries - 1, inserted = 0, to_flush_cnt = 0;
             records[*num_entries + 1].ptr = records[*num_entries].ptr;
             if (flush) {
-                if ((uint64_t) & (records[*num_entries + 1].ptr) % CACHE_LINE_SIZE == 0)
-                    clflush((char *)&(records[*num_entries + 1].ptr), sizeof(char *));
+                if ((uint64_t) &
+                    (records[*num_entries + 1].ptr) % CACHE_LINE_SIZE == 0)
+                    clflush((char *)&(records[*num_entries + 1].ptr),
+                            sizeof(char *));
             }
 
             // FAST
             for (i = *num_entries - 1; i >= 0; i--) {
                 if (key < records[i].key) {
                     records[i + 1].ptr = records[i].ptr;
-#ifdef STRINGKEY                    
+#ifdef STRINGKEY
                     records[i + 1].key.BorrowFrom(records[i].key);
 #else
                     records[i + 1].key = records[i].key;
-#endif                    
+#endif
 
                     if (flush) {
                         uint64_t records_ptr = (uint64_t)(&records[i + 1]);
 
                         int remainder = records_ptr % CACHE_LINE_SIZE;
-                        bool do_flush =
-                            (remainder == 0) ||
-                            ((((int)(remainder + sizeof(entry)) / CACHE_LINE_SIZE) == 1) &&
-                             ((remainder + sizeof(entry)) % CACHE_LINE_SIZE) != 0);
+                        bool do_flush = (remainder == 0) ||
+                                        ((((int)(remainder + sizeof(entry)) /
+                                           CACHE_LINE_SIZE) == 1) &&
+                                         ((remainder + sizeof(entry)) %
+                                          CACHE_LINE_SIZE) != 0);
                         if (do_flush) {
                             clflush((char *)records_ptr, CACHE_LINE_SIZE);
                             to_flush_cnt = 0;
@@ -382,9 +390,10 @@ public:
     }
 
     // Insert a new key - FAST and FAIR
-    page *store(PIE::Allocator *allocator, btree *bt, char *left, const entry_key_t &key, char *right, bool flush,
-                bool with_lock, page *invalid_sibling = nullptr) {
-         UNUSED(left);
+    page *store(PIE::Allocator *allocator, btree *bt, char *left,
+                const entry_key_t &key, char *right, bool flush, bool with_lock,
+                page *invalid_sibling = nullptr) {
+        UNUSED(left);
         if (with_lock) {
             hdr.mtx->lock(); // Lock the write lock
         }
@@ -403,7 +412,8 @@ public:
                 if (with_lock) {
                     hdr.mtx->unlock(); // Unlock the write lock
                 }
-                return hdr.sibling_ptr->store(allocator, bt, nullptr, key, right, true, with_lock,
+                return hdr.sibling_ptr->store(allocator, bt, nullptr, key,
+                                              right, true, with_lock,
                                               invalid_sibling);
             }
         }
@@ -435,13 +445,13 @@ public:
             int sibling_cnt = 0;
             if (hdr.leftmost_ptr == nullptr) { // leaf node
                 for (int i = m; i < num_entries; ++i) {
-                    sibling->insert_key(records[i].key, records[i].ptr, &sibling_cnt,
-                                        false);
+                    sibling->insert_key(records[i].key, records[i].ptr,
+                                        &sibling_cnt, false);
                 }
             } else { // internal node
                 for (int i = m + 1; i < num_entries; ++i) {
-                    sibling->insert_key(records[i].key, records[i].ptr, &sibling_cnt,
-                                        false);
+                    sibling->insert_key(records[i].key, records[i].ptr,
+                                        &sibling_cnt, false);
                 }
                 sibling->hdr.leftmost_ptr = (page *)records[m].ptr;
             }
@@ -477,9 +487,10 @@ public:
             }
 
             // Set a new root or insert the split key to the parent
-            if (bt->root == (char *)this) { // only one node can update the root ptr
-                page *new_root =
-                    new_page(allocator, (page *)this, split_key, sibling, hdr.level + 1);
+            if (bt->root ==
+                (char *)this) { // only one node can update the root ptr
+                page *new_root = new_page(allocator, (page *)this, split_key,
+                                          sibling, hdr.level + 1);
                 bt->setNewRoot((char *)new_root);
 
                 if (with_lock) {
@@ -499,7 +510,7 @@ public:
 
     // Search keys with linear search
     void linear_search_range(const entry_key_t &min, const entry_key_t &max,
-                             unsigned long *buf) {
+                             void **buf) {
         int i, off = 0;
         uint8_t previous_switch_counter;
         page *current = this;
@@ -520,10 +531,11 @@ public:
                     if ((tmp_key = current->records[0].key) > min) {
 #endif
                         if (tmp_key < max) {
-                            if ((tmp_ptr = current->records[0].ptr) != nullptr) {
+                            if ((tmp_ptr = current->records[0].ptr) !=
+                                nullptr) {
                                 if (tmp_key == current->records[0].key) {
                                     if (tmp_ptr) {
-                                        buf[off++] = (unsigned long)tmp_ptr;
+                                        buf[off++] = (void *)tmp_ptr;
                                     }
                                 }
                             }
@@ -533,7 +545,8 @@ public:
 
                     for (i = 1; current->records[i].ptr != nullptr; ++i) {
 #ifdef STRINGKEY
-                        if ((tmp_key.BorrowFrom(current->records[i].key)) > min) {
+                        if ((tmp_key.BorrowFrom(current->records[i].key)) >
+                            min) {
 #else
                         if ((tmp_key = current->records[i].key) > min) {
 #endif
@@ -542,7 +555,7 @@ public:
                                     current->records[i - 1].ptr) {
                                     if (tmp_key == current->records[i].key) {
                                         if (tmp_ptr)
-                                            buf[off++] = (unsigned long)tmp_ptr;
+                                            buf[off++] = (void *)tmp_ptr;
                                     }
                                 }
                             } else
@@ -551,18 +564,19 @@ public:
                     }
                 } else {
                     for (i = count() - 1; i > 0; --i) {
-#ifdef STRINGKEY                        
-                        if ((tmp_key.BorrowFrom(current->records[i].key)) > min) {
+#ifdef STRINGKEY
+                        if ((tmp_key.BorrowFrom(current->records[i].key)) >
+                            min) {
 #else
                         if ((tmp_key = current->records[i].key) > min) {
-#endif                                                            
+#endif
                             if (tmp_key < max) {
 
                                 if ((tmp_ptr = current->records[i].ptr) !=
                                     current->records[i - 1].ptr) {
                                     if (tmp_key == current->records[i].key) {
                                         if (tmp_ptr)
-                                            buf[off++] = (unsigned long)tmp_ptr;
+                                            buf[off++] = (void *)tmp_ptr;
                                     }
                                 }
                             } else
@@ -570,16 +584,17 @@ public:
                         }
                     }
 
-#ifdef STRINGKEY                        
+#ifdef STRINGKEY
                     if ((tmp_key.BorrowFrom(current->records[0].key)) > min) {
 #else
                     if ((tmp_key = current->records[0].key) > min) {
 #endif
                         if (tmp_key < max) {
-                            if ((tmp_ptr = current->records[0].ptr) != nullptr) {
+                            if ((tmp_ptr = current->records[0].ptr) !=
+                                nullptr) {
                                 if (tmp_key == current->records[0].key) {
                                     if (tmp_ptr) {
-                                        buf[off++] = (unsigned long)tmp_ptr;
+                                        buf[off++] = (void *)tmp_ptr;
                                     }
                                 }
                             }
@@ -607,11 +622,11 @@ public:
 
                 // search from left ro right
                 if (IS_FORWARD(previous_switch_counter)) {
-#ifdef STRINGKEY                    
+#ifdef STRINGKEY
                     if ((tmp_key.BorrowFrom(records[0].key)) == key) {
-#else                        
+#else
                     if ((tmp_key = records[0].key) == key) {
-#endif                        
+#endif
                         if ((t = records[0].ptr) != nullptr) {
                             if (tmp_key == records[0].key) {
                                 ret = t;
@@ -621,11 +636,11 @@ public:
                     }
 
                     for (i = 1; records[i].ptr != nullptr; ++i) {
-#ifdef STRINGKEY                        
+#ifdef STRINGKEY
                         if ((tmp_key.BorrowFrom(records[i].key)) == key) {
-#else                            
+#else
                         if ((tmp_key = records[i].key) == key) {
-#endif                            
+#endif
                             if (records[i - 1].ptr != (t = records[i].ptr)) {
                                 if (tmp_key == records[i].key) {
                                     ret = t;
@@ -636,12 +651,13 @@ public:
                     }
                 } else { // search from right to left
                     for (i = count() - 1; i > 0; --i) {
-#ifdef STRINGKEY                        
+#ifdef STRINGKEY
                         if ((tmp_key.BorrowFrom(records[i].key)) == key) {
-#else                            
+#else
                         if ((tmp_key = records[i].key) == key) {
-#endif                            
-                            if (records[i - 1].ptr != (t = records[i].ptr) && t) {
+#endif
+                            if (records[i - 1].ptr != (t = records[i].ptr) &&
+                                t) {
                                 if (tmp_key == records[i].key) {
                                     ret = t;
                                     break;
@@ -651,11 +667,11 @@ public:
                     }
 
                     if (!ret) {
-#ifdef STRINGKEY                        
+#ifdef STRINGKEY
                         if ((tmp_key.BorrowFrom(records[0].key)) == key) {
-#else                            
+#else
                         if ((tmp_key = records[0].key) == key) {
-#endif                            
+#endif
                             if (nullptr != (t = records[0].ptr) && t) {
                                 if (tmp_key == records[0].key) {
                                     ret = t;
@@ -671,7 +687,8 @@ public:
                 return ret;
             }
 
-            if ((t = (char *)hdr.sibling_ptr) && key >= ((page *)t)->records[0].key)
+            if ((t = (char *)hdr.sibling_ptr) &&
+                key >= ((page *)t)->records[0].key)
                 return t;
 
             return nullptr;
@@ -681,11 +698,11 @@ public:
                 ret = nullptr;
 
                 if (IS_FORWARD(previous_switch_counter)) {
-#ifdef STRINGKEY                    
+#ifdef STRINGKEY
                     if (key < (tmp_key.BorrowFrom(records[0].key))) {
-#else                        
+#else
                     if (key < (tmp_key = records[0].key)) {
-#endif                            
+#endif
                         if ((t = (char *)hdr.leftmost_ptr) != records[0].ptr) {
                             ret = t;
                             continue;
@@ -693,11 +710,11 @@ public:
                     }
 
                     for (i = 1; records[i].ptr != nullptr; ++i) {
-#ifdef STRINGKEY                        
+#ifdef STRINGKEY
                         if (key < (tmp_key.BorrowFrom(records[i].key))) {
-#else                            
+#else
                         if (key < (tmp_key = records[i].key)) {
-#endif                                
+#endif
                             if ((t = records[i - 1].ptr) != records[i].ptr) {
                                 ret = t;
                                 break;
@@ -711,19 +728,21 @@ public:
                     }
                 } else { // search from right to left
                     for (i = count() - 1; i >= 0; --i) {
-#ifdef STRINGKEY                        
+#ifdef STRINGKEY
                         if (key >= (tmp_key.BorrowFrom(records[i].key))) {
 #else
                         if (key >= (tmp_key = records[i].key)) {
 #endif
 
                             if (i == 0) {
-                                if ((char *)hdr.leftmost_ptr != (t = records[i].ptr)) {
+                                if ((char *)hdr.leftmost_ptr !=
+                                    (t = records[i].ptr)) {
                                     ret = t;
                                     break;
                                 }
                             } else {
-                                if (records[i - 1].ptr != (t = records[i].ptr)) {
+                                if (records[i - 1].ptr !=
+                                    (t = records[i].ptr)) {
                                     ret = t;
                                     break;
                                 }
@@ -794,12 +813,13 @@ public:
 /*
  * class btree
  */
-btree::btree() {
-    root = (char *)new page();
+btree::btree(PIE::Allocator *all) {
+    page *p = (page *)all->Allocate(sizeof(page));
+    p->init();
+    root = (char *)p;
     height = 1;
+    allocator = all;
 }
-
-
 
 void btree::setNewRoot(char *new_root) {
     this->root = (char *)new_root;
@@ -835,7 +855,8 @@ char *btree::btree_search(const entry_key_t &key) {
 }
 
 // insert the key in the leaf node
-void btree::btree_insert(const entry_key_t &key, char *right) { // need to be string
+status_code_t btree::btree_insert(const entry_key_t &key,
+                                  char *right) { // need to be string
     page *p = (page *)root;
 
     while (p->hdr.leftmost_ptr != nullptr) {
@@ -844,12 +865,14 @@ void btree::btree_insert(const entry_key_t &key, char *right) { // need to be st
 
     if (!p->store(allocator, this, nullptr, key, right, true, true)) { // store
         btree_insert(key, right);
+        return kOk;
     }
+    return kFailed;
 }
 
 // store the key into the node at the given level
-void btree::btree_insert_internal(char *left, const entry_key_t &key, char *right,
-                                  uint32_t level) {
+void btree::btree_insert_internal(char *left, const entry_key_t &key,
+                                  char *right, uint32_t level) {
     if (level > ((page *)root)->hdr.level)
         return;
 
@@ -863,7 +886,7 @@ void btree::btree_insert_internal(char *left, const entry_key_t &key, char *righ
     }
 }
 
-void btree::btree_delete(const entry_key_t &key) {
+status_code_t btree::btree_delete(const entry_key_t &key) {
     page *p = (page *)root;
 
     while (p->hdr.leftmost_ptr != nullptr) {
@@ -881,6 +904,7 @@ void btree::btree_delete(const entry_key_t &key) {
         if (!p->remove(this, key)) {
             btree_delete(key);
         }
+        return kOk;
     } else {
 #ifdef STRINGKEY
         printf("not found the key to delete %s\n", key.Data());
@@ -888,10 +912,11 @@ void btree::btree_delete(const entry_key_t &key) {
         printf("not found the key to delete %lu\n", key);
 #endif
     }
+    return kFailed;
 }
 
-void btree::btree_delete_internal(const entry_key_t &key, char *ptr, uint32_t level,
-                                  entry_key_t *deleted_key,
+void btree::btree_delete_internal(const entry_key_t &key, char *ptr,
+                                  uint32_t level, entry_key_t *deleted_key,
                                   bool *is_leftmost_node, page **left_sibling) {
     if (level > ((page *)this->root)->hdr.level)
         return;
@@ -936,8 +961,8 @@ void btree::btree_delete_internal(const entry_key_t &key, char *ptr, uint32_t le
 }
 
 // Function to search keys from "min" to "max"
-void btree::btree_search_range(const entry_key_t &min, const entry_key_t &max,
-                               unsigned long *buf) {
+status_code_t btree::btree_search_range(const entry_key_t &min,
+                                        const entry_key_t &max, void **buf) {
     page *p = (page *)root;
 
     while (p) {
@@ -947,10 +972,10 @@ void btree::btree_search_range(const entry_key_t &min, const entry_key_t &max,
         } else {
             // Found a leaf
             p->linear_search_range(min, max, buf);
-
             break;
         }
     }
+    return kOk;
 }
 
 void btree::printAll() {
@@ -974,3 +999,78 @@ void btree::printAll() {
     printf("total number of keys: %d\n", total_keys);
     pthread_mutex_unlock(&print_mtx);
 }
+
+class FASTFAIRTree : Index {
+  public:
+    FASTFAIRTree(Allocator *allocator_)
+        : tree(allocator_), allocator(allocator_){};
+
+    status_code_t Insert(const char *key, size_t key_len,
+                         void *value) override {
+        auto des = allocator->Allocate(key_len);
+        InternalString str(key, key_len, (uint8_t *)des);
+        return tree.btree_insert(str, (char *)value);
+    }
+
+    status_code_t Search(const char *key, size_t key_len,
+                         void **value) override {
+#ifdef STRINGKEY
+        char buf[512];
+        auto k = InternalString(key, key_len, (uint8_t *)buf);
+#else
+        auto k = (uint64_t)key;
+#endif
+        if ((*value = tree.btree_search(k))) {
+            return kOk;
+        }
+        return kNotFound;
+    }
+
+    status_code_t Update(const char *key, size_t key_len,
+                         void *value) override {
+        UNUSED(key);
+        UNUSED(key_len);
+        UNUSED(value);
+        return kNotDefined;
+    }
+
+    status_code_t Upsert(const char *key, size_t key_len,
+                         void *value) override {
+        UNUSED(key);
+        UNUSED(key_len);
+        UNUSED(value);
+        return kNotDefined;
+    }
+
+    status_code_t ScanCount(const char *startkey, size_t key_len, size_t count,
+                            void **vec) override {
+        UNUSED(startkey);
+        UNUSED(key_len);
+        UNUSED(count);
+        UNUSED(vec);
+        return kNotDefined;
+    }
+
+    status_code_t Scan(const char *startkey, size_t startkey_len,
+                       const char *endkey, size_t endkey_len,
+                       void **vec) override {
+#ifdef STRINGKEY
+        char bufs[512];
+        char bufe[512];
+        auto s = InternalString(startkey, startkey_len, (uint8_t *)bufs);
+        auto e = InternalString(endkey, endkey_len, (uint8_t *)bufe);
+#else
+        auto s = (uint64_t)startkey;
+        auto e = (uint64_t)endkey;
+#endif
+        return tree.btree_search_range(s, e, vec);
+    }
+
+    void Print() override { tree.printAll(); }
+
+  private:
+    btree tree;
+    Allocator *allocator;
+};
+} // namespace FASTFAIR
+} // namespace PIE

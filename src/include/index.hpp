@@ -11,7 +11,7 @@ namespace PIE {
 // An abstrat base index that provides basic
 // operation interfaces
 class Index {
- public:
+public:
   Index() = default;
   Index(const Index &) = delete;
   Index(Index &&) = delete;
@@ -20,7 +20,7 @@ class Index {
 
   ~Index() = default;
 
- public:
+public:
   // Insert one key-value pair into index.
   // Return kOk to indicate this insert operation success, otherwise
   // any non-ok code would indicate an error.
@@ -65,6 +65,6 @@ class Index {
   // The bucket/slot number of hash table
   virtual void Print() = 0;
 };
-};  // namespace PIE
+}; // namespace PIE
 
 #endif
