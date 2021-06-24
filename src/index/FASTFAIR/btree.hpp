@@ -132,6 +132,10 @@ class header {
 
   public:
     header() {
+        init();
+    }
+
+    void init() {
         mtx = new std::mutex();
 
         leftmost_ptr = nullptr;
@@ -150,7 +154,7 @@ class entry {
     char *ptr;       // 8 bytes
 
   public:
-    entry() : ptr() { key = 0ULL; }
+    entry() : key(), ptr() {}
 
     friend class page;
     friend class btree;
@@ -182,6 +186,10 @@ class page {
 
     void init(uint32_t level = 0) {
         hdr.level = level;
+        hdr.init();
+        for (int i = 0; i < cardinality; i++) {
+            records[i].key.Nullify();
+        }
         records[0].ptr = nullptr;
     }
 
@@ -189,6 +197,9 @@ class page {
     void init(page *left, entry_key_t key, page *right, uint32_t level = 0) {
         hdr.leftmost_ptr = left;
         hdr.level = level;
+        for (int i = 0; i < cardinality; i++) {
+            records[i].key.Nullify();
+        }
         records[0].key = key;
         records[0].ptr = (char *)right;
         records[1].ptr = nullptr;

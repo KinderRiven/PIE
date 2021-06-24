@@ -70,6 +70,11 @@ namespace PIE {
             return *this;
         }
 
+        void Nullify() {
+            delete data;
+            data = nullptr;
+        }
+
         // Return the length of string;
         size_t Length() const { 
             if (data == nullptr) { return 0; }
