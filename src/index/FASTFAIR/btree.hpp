@@ -11,6 +11,9 @@
   Please use at your own risk.
 */
 
+#ifndef INCLUDE_SRC_INDEX_FASTFAIR_HPP__
+#define INCLUDE_SRC_INDEX_FASTFAIR_HPP__
+
 #include <cassert>
 #include <climits>
 #include <cmath>
@@ -1074,3 +1077,5 @@ class FASTFAIRTree : public Index {
 };
 } // namespace FASTFAIR
 } // namespace PIE
+
+#endif
