@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-04-17 11:58:39
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2021-06-24 20:06:10
+ * @LastEditTime: 2021-06-24 20:07:35
  * @FilePath: /SplitKV/benchmark/go-ycsb/rocksdb_main.cc
  */
 
@@ -242,19 +242,19 @@ static void run_thread(thread_context_t* context)
         generator_kv(__operator->skew_, __key, __value);
         if (__operator->type_ == OPT_TYPE_INSERT) {
             Slice __skey(__key, kKeySize);
-            __value = *((uint64_t*)__key);
+            __value = (void *)(*((uint64_t*)__key));
             Status __status = _scheme->Insert(__skey, __value));
             _insert_cnt++;
             delete __value;
         } else if (__operator->type_ == OPT_TYPE_UPDATE) {
             Slice __skey(__key, kKeySize);
-            __value = *((uint64_t*)__key);
+            __value = (void *)(*((uint64_t*)__key));
             Status __status = _scheme->Update(__skey, __value));
             _update_cnt++;
             delete __value;
         } else if (__operator->type_ == OPT_TYPE_READ) {
             Slice __skey(__key, kKeySize);
-            __value = *((uint64_t*)__key);
+            __value = (void *)(*((uint64_t*)__key));
             Status __status = _scheme->Search(__skey, &__value);
             _read_cnt++;
             if (__status.ok()) {
