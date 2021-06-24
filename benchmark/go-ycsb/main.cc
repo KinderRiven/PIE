@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-04-17 11:58:39
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2021-06-24 20:15:25
+ * @LastEditTime: 2021-06-24 20:16:13
  * @FilePath: /SplitKV/benchmark/go-ycsb/rocksdb_main.cc
  */
 
@@ -234,7 +234,7 @@ static void run_thread(thread_context_t* context)
             __value = (void*)(*((uint64_t*)__skey.data()));
             Status __status = _scheme->Insert(__skey, __value);
             _insert_cnt++;
-            if (__status.OK()) {
+            if (__status.ok()) {
                 _insert_ok_cnt++;
             }
         } else if (__operator->type_ == OPT_TYPE_UPDATE) {
@@ -242,7 +242,7 @@ static void run_thread(thread_context_t* context)
             __value = (void*)(*((uint64_t*)__skey.data()));
             Status __status = _scheme->Update(__skey, __value);
             _update_cnt++;
-            if (__status.OK()) {
+            if (__status.ok()) {
                 _update_ok_cnt++;
             }
         } else if (__operator->type_ == OPT_TYPE_READ) {
