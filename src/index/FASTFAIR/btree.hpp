@@ -185,8 +185,8 @@ class page {
     friend class btree;
 
     void init(uint32_t level = 0) {
+        hdr.init();        
         hdr.level = level;
-        hdr.init();
         for (int i = 0; i < cardinality; i++) {
             records[i].key.Nullify();
         }
@@ -195,6 +195,7 @@ class page {
 
     // this is called when tree grows
     void init(page *left, entry_key_t key, page *right, uint32_t level = 0) {
+        hdr.init();
         hdr.leftmost_ptr = left;
         hdr.level = level;
         for (int i = 0; i < cardinality; i++) {

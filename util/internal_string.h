@@ -71,7 +71,6 @@ namespace PIE {
         }
 
         void Nullify() {
-            delete data;
             data = nullptr;
         }
 
