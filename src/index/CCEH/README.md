@@ -1,3 +1,11 @@
+<!--
+ * @Author: your name
+ * @Date: 2021-06-23 20:09:47
+ * @LastEditTime: 2021-06-24 11:08:51
+ * @LastEditors: your name
+ * @Description: In User Settings Edit
+ * @FilePath: /PIE/src/index/CCEH/README.md
+-->
 # Cache-Concious Extendible Hashing(CCEH)
 ## Introduction
 This directory contains implementations of **Cache-Concious Extendible Hashing(CCEH)**, a variant of 
@@ -24,7 +32,7 @@ command line parameter are as follows:
 | ``size``        | number of inserted keys                            | 100M            |
 | ``key_len``     | size of generated key                              | 16              |
 
-Apparently we use the string version by default. To enable integer key test, please comment out ``-DKEYTYPE=STRINGKEY`` in Makefile.
+Apparently we use the string version by default. To enable integer key test, please comment out ``-DKEYTYPE=CCEH_STRINGKEY`` in Makefile.
 
 ## Features
 

@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-06-22 19:43:54
- * @LastEditTime: 2021-06-24 10:13:41
+ * @LastEditTime: 2021-06-24 11:10:24
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /PIE/benchmark/example/example.cc
@@ -20,7 +20,7 @@ int main(int argc, char** argv)
     _options.index_type = kCCEH;
     _options.scheme_type = kSingleScheme;
     _options.pmem_file_path = "/home/pmem0/PIE";
-    _options.pmem_file_size = 2UL * 1024 * 1024 * 1024;
+    _options.pmem_file_size = 100UL * 1024 * 1024 * 1024;
 
     uint64_t _found_count = 0;
     Scheme* _scheme;
@@ -34,7 +34,7 @@ int main(int argc, char** argv)
         _scheme->Insert(__key, __value);
     }
     // TEST SEARCH
-    for (int i = 1; i <=_num_kv; i++) {
+    for (int i = 1; i <= _num_kv; i++) {
         uint64_t __key64 = i;
         Slice __key((const char*)&__key64, 8UL);
         void* __value;
