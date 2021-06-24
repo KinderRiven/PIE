@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-04-17 11:58:39
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2021-06-24 20:08:23
+ * @LastEditTime: 2021-06-24 20:10:54
  * @FilePath: /SplitKV/benchmark/go-ycsb/rocksdb_main.cc
  */
 
@@ -210,16 +210,6 @@ void read_ycsb_file(const char* name)
     }
 }
 
-static inline void generator_kv(std::string& skew, char* key, char* value)
-{
-    size_t _key_size = skew.size() > kKeySize ? kKeySize : skew.size();
-    memset(key, 0, kKeySize);
-    memcpy(key, skew.c_str(), _key_size);
-    // size_t _value_size = skew.size() > kValueSize ? kValueSize : skew.size();
-    // memset(value, 0, kValueSize);
-    // memcpy(value, skew.c_str(), _value_size);
-}
-
 static void run_thread(thread_context_t* context)
 {
     uint32_t _insert_cnt = 0;
@@ -237,24 +227,22 @@ static void run_thread(thread_context_t* context)
 
     for (auto __iter = _vec_opt->begin(); __iter != _vec_opt->end(); __iter++) {
         ycsb_operator_t* __operator = *(__iter);
-        char* __key = new char[kKeySize];
         void* __value = nullptr;
-        generator_kv(__operator->skew_, __key, __value);
         if (__operator->type_ == OPT_TYPE_INSERT) {
-            Slice __skey(__key, kKeySize);
-            __value = (void *)(*((uint64_t*)__key));
+            Slice __skey(__operator->skew_);
+            __value = (void *)(*((uint64_t*)__skey.data()));
             Status __status = _scheme->Insert(__skey, __value));
             _insert_cnt++;
             delete __value;
         } else if (__operator->type_ == OPT_TYPE_UPDATE) {
-            Slice __skey(__key, kKeySize);
-            __value = (void *)(*((uint64_t*)__key));
+            Slice __skey(__operator->skew_);
+            __value = (void *)(*((uint64_t*)__skey.data()));
             Status __status = _scheme->Update(__skey, __value));
             _update_cnt++;
             delete __value;
         } else if (__operator->type_ == OPT_TYPE_READ) {
-            Slice __skey(__key, kKeySize);
-            __value = (void *)(*((uint64_t*)__key));
+            Slice __skey(__operator->skew_);
+            __value = (void *)(*((uint64_t*)__skey.data()));
             Status __status = _scheme->Search(__skey, &__value);
             _read_cnt++;
             if (__status.ok()) {
