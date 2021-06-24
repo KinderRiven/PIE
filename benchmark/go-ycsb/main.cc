@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-04-17 11:58:39
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2021-06-24 20:36:31
+ * @LastEditTime: 2021-06-24 20:38:25
  * @FilePath: /SplitKV/benchmark/go-ycsb/rocksdb_main.cc
  */
 
@@ -231,7 +231,7 @@ static void run_thread(thread_context_t* context)
         if (__operator->type_ == OPT_TYPE_INSERT) {
             Slice __skey(__operator->skew_);
             __value = (void*)(*((uint64_t*)__skey.data()));
-            std::cout << "[KEY:" << __operator->skew_ << "][KEY_LEN:" << __skey.size() << "]" << std::endl; 
+            // std::cout << "[KEY:" << __operator->skew_ << "][KEY_LEN:" << __skey.size() << "]" << std::endl; 
             Status __status = _scheme->Insert(__skey, __value);
             _insert_cnt++;
             if (__status.ok()) {
