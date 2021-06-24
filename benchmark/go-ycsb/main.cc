@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-04-17 11:58:39
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2021-06-24 20:00:58
+ * @LastEditTime: 2021-06-24 20:06:10
  * @FilePath: /SplitKV/benchmark/go-ycsb/rocksdb_main.cc
  */
 
@@ -34,6 +34,7 @@
 #include <unistd.h>
 #include <vector>
 
+#include "timer.h"
 #include "options.hpp"
 #include "scheme.hpp"
 #include "slice.hpp"
