@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-06-22 19:43:54
- * @LastEditTime: 2021-06-23 20:15:43
+ * @LastEditTime: 2021-06-24 10:00:46
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /PIE/benchmark/example/example.cc
@@ -15,18 +15,35 @@ using namespace PIE;
 
 int main(int argc, char** argv)
 {
+    int _num_kv = 1000000;
     Options _options;
     _options.index_type = kCCEH;
     _options.scheme_type = kSingleScheme;
     _options.pmem_file_path = "/home/pmem0/PIE";
     _options.pmem_file_size = 2UL * 1024 * 1024 * 1024;
 
+    uint64_t _found_count = 0;
     Scheme* _scheme;
     Scheme::Create(_options, &_scheme);
 
-    Slice _key("HelloWorld");
-    void* _value = nullptr;
-    _scheme->Insert(_key, _value);
+    // TEST INSERT
+    for (int i = 0; i < _num_kv; i++) {
+        uint64_t __key64 = i;
+        Slice __key((const char*)&__key64, 8UL);
+        void* __value = (void*)(__key64);
+        _scheme->Insert(__key, __value);
+    }
+    // TEST SEARCH
+    for (int i = 0; i < _num_kv; i++) {
+        uint64_t __key64 = i;
+        Slice __key((const char*)&__key64, 8UL);
+        void* __value;
+        _scheme->Search(__key, &__value);
+        if ((uint64_t)__value == i) {
+            _found_count++;
+        }
+    }
+    printf("%llu/%llu\n", _found_count, _num_kv);
     delete _scheme;
     return 0;
 }

@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-06-22 15:27:31
- * @LastEditTime: 2021-06-23 14:49:04
+ * @LastEditTime: 2021-06-23 21:20:34
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /PIE/include/options.hpp
@@ -30,13 +30,13 @@ public:
     ~Options() = default;
 
 public:
-    index_type_t index_type;
-
-    scheme_type_t scheme_type;
+    size_t pmem_file_size;
 
     std::string pmem_file_path;
 
-    size_t pmem_file_size;
+    index_type_t index_type;
+
+    scheme_type_t scheme_type;
 };
 };
 
