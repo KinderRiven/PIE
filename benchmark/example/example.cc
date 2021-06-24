@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-06-22 19:43:54
- * @LastEditTime: 2021-06-24 11:10:24
+ * @LastEditTime: 2021-06-24 19:16:27
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /PIE/benchmark/example/example.cc
@@ -17,7 +17,7 @@ int main(int argc, char** argv)
 {
     int _num_kv = 1000000;
     Options _options;
-    _options.index_type = kCCEH;
+    _options.index_type = kFASTFAIR;
     _options.scheme_type = kSingleScheme;
     _options.pmem_file_path = "/home/pmem0/PIE";
     _options.pmem_file_size = 100UL * 1024 * 1024 * 1024;

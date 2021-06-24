@@ -18,8 +18,14 @@ set(SRC_ALLOCATOR
 )
 
 set(SRC_INDEX
-    ${SRC_BASE}/src/index/CCEH/CCEH_MSB.cc
+    # EXAMPLE
     ${SRC_BASE}/src/index/example/example_index.cc
+    # CCEH
+    ${SRC_BASE}/src/index/CCEH/CCEH_MSB.cc
+    # RHTREE
+    ${SRC_BASE}/src/index/RHTREE/rhtree.cc
+    ${SRC_BASE}/src/index/RHTREE/rhtreecity.cc
+    ${SRC_BASE}/src/index/RHTREE/rhtreenode.cc
 )
 
 set(SRC_UTILS
