@@ -882,7 +882,10 @@ status_code_t btree::btree_insert(const entry_key_t &key,
         btree_insert(key, right);
         return kOk;
     }
-    return kFailed;
+
+    // Never fail, the p->store picks a page to insert, if no page is found,
+    // recurse to another level.
+    return kOk;
 }
 
 // store the key into the node at the given level
