@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-04-17 11:58:39
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2021-06-27 15:19:23
+ * @LastEditTime: 2021-06-27 15:20:33
  * @FilePath: /SplitKV/benchmark/go-ycsb/rocksdb_main.cc
  */
 
@@ -72,7 +72,7 @@ public:
     std::vector<ycsb_operator_t*>* vec_opt;
 };
 
-static std::vector<ycsb_operator_t*> g_vec_opt[kNumThread];
+static std::vector<ycsb_operator_t*> g_vec_opt[64];
 
 // READ usertable user6302928200575776280 [ field0 ]
 static inline bool handle_read(std::ifstream& _fin, std::string& key)
