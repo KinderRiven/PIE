@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-04-17 11:58:39
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2021-06-27 16:01:28
+ * @LastEditTime: 2021-06-27 16:04:41
  * @FilePath: /SplitKV/benchmark/go-ycsb/rocksdb_main.cc
  */
 
@@ -304,8 +304,8 @@ int main(int argc, char** argv)
         } else if (strncmp(argv[i], "--pmem_file_path=", 17) == 0) {
             strcpy(_pmem_path, argv[i] + 17);
             _options.pmem_file_path.assign(argv[i] + 17);
-        } else if (strncmp(argv[i], "--index=", 7) == 0) {
-            strcpy(_index_type, argv[i] + 7);
+        } else if (strncmp(argv[i], "--index=", 8) == 0) {
+            strcpy(_index_type, argv[i] + 8);
             if (!strcmp(_index_type, "CCEH")) {
                 _options.index_type = kCCEH;
             } else if (!strcmp(_index_type, "FASTFAIR")) {
