@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-04-17 11:58:39
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2021-06-27 15:24:15
+ * @LastEditTime: 2021-06-27 16:01:28
  * @FilePath: /SplitKV/benchmark/go-ycsb/rocksdb_main.cc
  */
 
@@ -280,6 +280,7 @@ void run_workload(const char* ycsb, Scheme* scheme)
     }
 }
 
+// ./tester --num_thread=8 --pmem_file_path=/home/pmem3/PIE --pmem_file_size=100 --index=CCEH
 int main(int argc, char** argv)
 {
     Options _options;
@@ -302,7 +303,7 @@ int main(int argc, char** argv)
             _options.pmem_file_size = n * (1024UL * 1024 * 1024);
         } else if (strncmp(argv[i], "--pmem_file_path=", 17) == 0) {
             strcpy(_pmem_path, argv[i] + 17);
-            _options.pmem_file_path.assign(argv[i] + 6);
+            _options.pmem_file_path.assign(argv[i] + 17);
         } else if (strncmp(argv[i], "--index=", 7) == 0) {
             strcpy(_index_type, argv[i] + 7);
             if (!strcmp(_index_type, "CCEH")) {
