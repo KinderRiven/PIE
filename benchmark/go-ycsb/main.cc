@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-04-17 11:58:39
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2021-06-27 15:13:50
+ * @LastEditTime: 2021-06-27 15:18:18
  * @FilePath: /SplitKV/benchmark/go-ycsb/rocksdb_main.cc
  */
 
@@ -177,7 +177,7 @@ void read_ycsb_file(const char* name)
             if (_line == "READ") {
                 _res = handle_read(_fin, _key);
                 if (_res) {
-                    g_vec_opt[_num_opt % kNumThread].push_back(new ycsb_operator_t(OPT_TYPE_READ, _key, 0));
+                    g_vec_opt[_num_opt % kNumThread].push_back(new ycsb_operator_t(OPT_TYPE_SEARCH, _key, 0));
                 }
                 // std::cout << "READ " << _key << std::endl;
             } else if (_line == "UPDATE") {
@@ -305,11 +305,11 @@ int main(int argc, char** argv)
             _options.pmem_file_path.assign(argv[i] + 6);
         } else if (strncmp(argv[i], "--index=", 7) == 0) {
             strcpy(_index_type, argv[i] + 7);
-            if (!memcmp(_index_type, "CCEH")) {
+            if (!strcmp(_index_type, "CCEH")) {
                 _options.index_type = kCCEH;
-            } else if (!memcmp(_index_type, "FASTFAIR")) {
+            } else if (!strcmp(_index_type, "FASTFAIR")) {
                 _options.index_type = kFASTFAIR
-            } else if (!memcmp(_index_type, "RHTREE")) {
+            } else if (!strcmp(_index_type, "RHTREE")) {
                 _options.index_type = kRHTREE;
             }
         } else if (i > 0) {
