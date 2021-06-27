@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-04-17 11:58:39
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2021-06-27 15:20:33
+ * @LastEditTime: 2021-06-27 15:24:15
  * @FilePath: /SplitKV/benchmark/go-ycsb/rocksdb_main.cc
  */
 
@@ -255,7 +255,7 @@ static void run_thread(thread_context_t* context)
         } else if (__operator->type_ == OPT_TYPE_SCAN) {
             Slice __skey(__operator->skew_);
             Status __status = _scheme->ScanCount(__skey, __operator->other_, &__value);
-            delete __value;
+            delete (char*)__value;
         }
     }
     _timer.Stop();
