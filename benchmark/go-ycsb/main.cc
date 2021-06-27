@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-04-17 11:58:39
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2021-06-24 20:38:25
+ * @LastEditTime: 2021-06-27 15:13:50
  * @FilePath: /SplitKV/benchmark/go-ycsb/rocksdb_main.cc
  */
 
@@ -45,7 +45,7 @@ const static uint32_t kNumThread = 1;
 
 #define OPT_TYPE_INSERT (1)
 #define OPT_TYPE_UPDATE (2)
-#define OPT_TYPE_READ (3)
+#define OPT_TYPE_SEARCH (3)
 #define OPT_TYPE_SCAN (4)
 
 const char* g_ycsb_workload[] = { "workload/workloada.load", "workload/workloada.run" };
@@ -231,7 +231,6 @@ static void run_thread(thread_context_t* context)
         if (__operator->type_ == OPT_TYPE_INSERT) {
             Slice __skey(__operator->skew_);
             __value = (void*)(*((uint64_t*)__skey.data()));
-            // std::cout << "[KEY:" << __operator->skew_ << "][KEY_LEN:" << __skey.size() << "]" << std::endl; 
             Status __status = _scheme->Insert(__skey, __value);
             _insert_cnt++;
             if (__status.ok()) {
@@ -245,7 +244,7 @@ static void run_thread(thread_context_t* context)
             if (__status.ok()) {
                 _update_ok_cnt++;
             }
-        } else if (__operator->type_ == OPT_TYPE_READ) {
+        } else if (__operator->type_ == OPT_TYPE_SEARCH) {
             Slice __skey(__operator->skew_);
             __value = (void*)(*((uint64_t*)__skey.data()));
             Status __status = _scheme->Search(__skey, &__value);
@@ -253,6 +252,10 @@ static void run_thread(thread_context_t* context)
             if (__status.ok()) {
                 _search_ok_cnt++;
             }
+        } else if (__operator->type_ == OPT_TYPE_SCAN) {
+            Slice __skey(__operator->skew_);
+            Status __status = _scheme->ScanCount(__skey, __operator->other_, &__value);
+            delete __value;
         }
     }
     _timer.Stop();
@@ -284,6 +287,36 @@ int main(int argc, char** argv)
     _options.scheme_type = kSingleScheme;
     _options.pmem_file_path = "/home/pmem0/PIE";
     _options.pmem_file_size = 100UL * 1024 * 1024 * 1024;
+
+    char _index_type[128];
+    char _pmem_path[128] = "/home/pmem0";
+
+    // Workload Generator
+    for (int i = 0; i < argc; i++) {
+        char junk;
+        uint64_t n;
+        double f;
+        if (sscanf(argv[i], "--num_thread=%llu%c", &n, &junk) == 1) {
+            kNumThread = n;
+        } else if (sscanf(argv[i], "--pmem_file_size=%llu%c", &n, &junk) == 1) {
+            _options.pmem_file_size = n * (1024UL * 1024 * 1024);
+        } else if (strncmp(argv[i], "--pmem_file_path=", 17) == 0) {
+            strcpy(_pmem_path, argv[i] + 17);
+            _options.pmem_file_path.assign(argv[i] + 6);
+        } else if (strncmp(argv[i], "--index=", 7) == 0) {
+            strcpy(_index_type, argv[i] + 7);
+            if (!memcmp(_index_type, "CCEH")) {
+                _options.index_type = kCCEH;
+            } else if (!memcmp(_index_type, "FASTFAIR")) {
+                _options.index_type = kFASTFAIR
+            } else if (!memcmp(_index_type, "RHTREE")) {
+                _options.index_type = kRHTREE;
+            }
+        } else if (i > 0) {
+            std::cout << "ERROR PARAMETER [" << argv[i] << "]" << std::endl;
+            exit(1);
+        }
+    }
 
     Scheme* _scheme;
     Scheme::Create(_options, &_scheme);
