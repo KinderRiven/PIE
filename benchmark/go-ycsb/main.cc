@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-04-17 11:58:39
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2021-06-27 15:18:18
+ * @LastEditTime: 2021-06-27 15:19:23
  * @FilePath: /SplitKV/benchmark/go-ycsb/rocksdb_main.cc
  */
 
@@ -41,7 +41,7 @@
 
 using namespace PIE;
 
-const static uint32_t kNumThread = 1;
+static uint32_t kNumThread = 1;
 
 #define OPT_TYPE_INSERT (1)
 #define OPT_TYPE_UPDATE (2)
@@ -308,7 +308,7 @@ int main(int argc, char** argv)
             if (!strcmp(_index_type, "CCEH")) {
                 _options.index_type = kCCEH;
             } else if (!strcmp(_index_type, "FASTFAIR")) {
-                _options.index_type = kFASTFAIR
+                _options.index_type = kFASTFAIR;
             } else if (!strcmp(_index_type, "RHTREE")) {
                 _options.index_type = kRHTREE;
             }
