@@ -77,8 +77,8 @@ int main(int argc, char* argv[])
 
     int _num_threads = 1;
     size_t _key_length = 8;
-    size_t _num_test = 1000000;
-    size_t _num_warmup = 5000000;
+    size_t _num_test = 10000000;
+    size_t _num_warmup = 50000000;
 
     char _index_type[128];
     char _pmem_path[128] = "/home/pmem0";
@@ -137,8 +137,8 @@ int main(int argc, char* argv[])
     _wopt.num_test = _num_test;
     start_workload(&_wopt);
 
-    strcpy(_wopt.name, "SINGLE_PUT");
-    _wopt.type = DBBENCH_PUT;
+    strcpy(_wopt.name, "SINGLE_UPDATE");
+    _wopt.type = DBBENCH_UPDATE;
     _wopt.num_test = _num_test;
     start_workload(&_wopt);
 

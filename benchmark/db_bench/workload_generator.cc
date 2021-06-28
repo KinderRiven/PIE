@@ -10,7 +10,7 @@
 using namespace PIE;
 using namespace kv_benchmark;
 
-#define RESULT_OUTPUT_TO_FILE
+// #define RESULT_OUTPUT_TO_FILE
 static char _g_oname[DBBENCH_NUM_OPT_TYPE][32] = { "PUT", "GET", "UPDATE" };
 static int g_numa[] = { 0, 2, 4, 6, 8, 20, 22, 24, 26, 28, 10, 12, 14, 16, 18, 30, 32, 34, 36, 38 };
 
@@ -99,7 +99,7 @@ static void thread_task(thread_param_t* param)
             }
         } else if (__type == DBBENCH_UPDATE) {
             Slice __skey(_key, _key_length);
-            Status __status = _scheme->Insert(__skey, _value);
+            Status __status = _scheme->Update(__skey, _value);
             param->result_count[__type]++;
             if (__status.ok()) {
                 param->result_success[__type]++;
