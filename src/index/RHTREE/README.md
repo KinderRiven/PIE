@@ -22,7 +22,7 @@ command line parameter are as follows:
 | ``size``        | number of inserted keys                            | 100M            |
 | ``key_len``     | size of generated key                              | 16              |
 
-Note: RHTree only supports string key(both fixed size and variable size), a ``uint64_t`` key can be converted to a string key of fixed 8 bytes length to adjust RHTree operation.
+**Note**: RHTree only supports string key(both fixed size and variable size), a ``uint64_t`` key can be converted to a string key of fixed 8 bytes length to adjust RHTree operation.
 
 ## Features
 | Features        |    Description                                                                                     | Support |
