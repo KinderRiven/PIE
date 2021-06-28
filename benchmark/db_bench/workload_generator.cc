@@ -166,9 +166,9 @@ void WorkloadGenerator::Run()
             if (_params[i].vec_latency[j].size() > 0) {
                 char __name[128];
                 __lat = 1.0 * _params[i].result_latency[j] / (1000UL * _params[i].result_count[j]);
+                std::string __str = _g_oname[j];
 #ifdef RESULT_OUTPUT_TO_FILE
                 // output into file
-                std::string __str = _g_oname[j];
                 sprintf(__name, "%s/%s_%s.lat", result_path_.c_str(), name_, _g_oname[j]);
                 result_output(__name, _params[i].vec_latency[j]);
                 _fout << "  [" << __str << "][lat:" << __lat << "][iops:" << 1000000.0 / __lat << "][count:" << _params[i].result_count[j] << "|" << 100.0 * _params[i].result_count[j] / _params[i].count << "%%][success:" << _params[i].result_success[j] << "|" << 100.0 * _params[i].result_success[j] / _params[i].result_count[j] << "%%]" << std::endl;
