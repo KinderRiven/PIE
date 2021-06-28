@@ -66,7 +66,7 @@ status_code_t RHTreeIndex::Insert(const char *key, size_t key_len,
 
   for (;;) {
     // reaches coresponding node and do insert operation
-    RHTreeLeaf *leaf = decend_to_leaf(internalkey);
+    RHTreeLeaf *leaf = find_leaf(internalkey);
     auto stat = leaf->leaf_insert(internalkey, value, nvm_allocator_);
     leaf->UnRdLock();  // release lock to avoid deadlock
 
@@ -103,8 +103,10 @@ status_code_t RHTreeIndex::Search(const char *key, size_t key_len,
   static thread_local uint8_t key_buff[1024];
   RHTREE_Key_t internalkey(key, key_len, key_buff);
 
-  RHTreeLeaf *leaf = decend_to_leaf(internalkey);
-  return leaf->leaf_search(internalkey, *value);
+  RHTreeLeaf *leaf = find_leaf(internalkey);
+  auto stat = leaf->leaf_search(internalkey, *value);
+  leaf->UnRdLock();
+  return stat;
 }
 
 status_code_t RHTreeIndex::Update(const char *key, size_t key_len,
@@ -112,8 +114,10 @@ status_code_t RHTreeIndex::Update(const char *key, size_t key_len,
   static thread_local uint8_t key_buff[1024];
   RHTREE_Key_t internalkey(key, key_len, key_buff);
 
-  RHTreeLeaf *leaf = decend_to_leaf(internalkey);
-  return leaf->leaf_update(internalkey, value, nvm_allocator_);
+  RHTreeLeaf *leaf = find_leaf(internalkey);
+  auto stat = leaf->leaf_update(internalkey, value, nvm_allocator_);
+  leaf->UnRdLock();
+  return stat;
 }
 
 status_code_t RHTreeIndex::Upsert(const char *key, size_t key_len,

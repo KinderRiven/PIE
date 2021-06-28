@@ -93,39 +93,69 @@ class RHTreeIndex : public Index {
     return ret;
   }
 
-  // For a specific key, traverse from the root node to its coresponding
-  // leaf node. This may occur multiple retry
-  RHTreeLeaf *decend_to_leaf(const RHTREE_Key_t &key);
+  // For a specific key, traverse from the input root node to its coresponding
+  // leaf node, the target leaf holding its read lock is returned
+  RHTreeLeaf *decend_to_leaf(const RHTREE_Key_t &key, InternalNode *root,
+                             int height);
+  RHTreeLeaf *find_leaf(const RHTREE_Key_t &key);
 
  private:
   InternalNode *root_;  // The root of the whole tree structure
   Allocator *dram_allocator_, *nvm_allocator_;
 };
 
-inline RHTreeLeaf *RHTreeIndex::decend_to_leaf(const RHTREE_Key_t &key) {
+inline RHTreeLeaf *RHTreeIndex::decend_to_leaf(const RHTREE_Key_t &key,
+                                               InternalNode *root, int height) {
+  Node *curr = root;
+  while (!curr->IsLeaf()) {
+    uint8_t token = key[height++];
+    curr = reinterpret_cast<InternalNode *>(curr)->children[token];
+  }
+
+  RHTreeLeaf *leaf = reinterpret_cast<RHTreeLeaf *>(curr);
+  while (leaf->TryRdLock())
+    ;  // spin to acquire read lock
+  return leaf;
+}
+
+inline RHTreeLeaf *RHTreeIndex::find_leaf(const RHTREE_Key_t &key) {
   InternalNode *root = root_;
   int height = 0;
-  RHTreeLeaf *leaf = nullptr;
-
-  // retry until prefix matches
+  RHTreeLeaf *leaf = decend_to_leaf(key, root, height);
   while (leaf == nullptr || !leaf->PrefixMatch(key, &height, &root)) {
     if (leaf != nullptr) {
       leaf->UnRdLock();
     }
-    Node *curr = root;
-    int curr_height = height;
-    // Move down until reaches a leaf
-    while (!curr->IsLeaf()) {
-      curr =
-          reinterpret_cast<InternalNode *>(curr)->children[key[curr_height++]];
-    }
-    leaf = reinterpret_cast<RHTreeLeaf *>(curr);
-    // Spin until access this leaf
-    while (leaf->TryRdLock() != 0)
-      ;
+    leaf = decend_to_leaf(key, root, height);
   }
   return leaf;
 }
+
+// inline RHTreeLeaf *RHTreeIndex::decend_to_leaf(const RHTREE_Key_t &key) {
+//   InternalNode *root = root_;
+//   int height = 0;
+//   RHTreeLeaf *leaf = nullptr;
+
+//   // retry until prefix matches
+//   while (leaf == nullptr || !leaf->PrefixMatch(key, &height, &root)) {
+//     if (leaf != nullptr) {
+//       leaf->UnRdLock();
+//     }
+//     Node *curr = root;
+//     int curr_height = height;
+//     // Move down until reaches a leaf
+//     while (!curr->IsLeaf()) {
+//       curr =
+//           reinterpret_cast<InternalNode
+//           *>(curr)->children[key[curr_height++]];
+//     }
+//     leaf = reinterpret_cast<RHTreeLeaf *>(curr);
+//     // Spin until access this leaf
+//     while (leaf->TryRdLock() != 0)
+//       ;
+//   }
+//   return leaf;
+// }
 
 };  // namespace RHTREE
 };  // namespace PIE
