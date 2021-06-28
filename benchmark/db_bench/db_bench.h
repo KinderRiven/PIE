@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2020-11-02 13:42:48
- * @LastEditTime: 2021-06-28 11:24:48
+ * @LastEditTime: 2021-06-28 13:24:22
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /PIE/benchmark/db_bench/db_bench.h
@@ -16,19 +16,15 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define DBBENCH_NUM_THREAD (16)
-#define DBBENCH_KEY_LENGTH (8)
-#define DBBENCH_VALUE_LENGTH (4096)
-
-#define DBBENCH_NUM_OPT_TYPE (2)
+#define DBBENCH_NUM_OPT_TYPE (3)
 #define DBBENCH_PUT (0)
 #define DBBENCH_GET (1)
+#define DBBENCH_UPDATE (2)
 
 namespace kv_benchmark {
 // Only Support Single Thread
 class DBBench {
 public:
-    // key range is [base_key, base_key + key_range]
     DBBench(int type, uint32_t seed, size_t key_length)
         : type_(type)
         , key_length_(key_length)
