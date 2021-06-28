@@ -67,7 +67,7 @@ static void thread_task(thread_param_t* param)
     PIE::Scheme* _scheme = param->scheme;
     kv_benchmark::DBBench* _benchmark = param->benchmark;
 
-    assert((_benchmark != nullptr) && (_db != nullptr));
+    assert((_benchmark != nullptr) && (_scheme != nullptr));
     _benchmark->initlizate();
 
     char _key[128];
