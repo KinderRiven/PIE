@@ -14,7 +14,7 @@ original 8B integer key with pointer to variable-size key, which is a common app
 in index structure. 
 
 For more details about CCEH, please refer to original github repository [CCEH](https://github.com/DICL/CCEH) 
-and USENIX FAST2019 paper "[Write-Optimized Dynamic Hashing for Persistent Memory](https://www.usenix.org/conference/fast19/presentation/nam)"
+and USENIX FAST2019 paper ["Write-Optimized Dynamic Hashing for Persistent Memory"](https://www.usenix.org/conference/fast19/presentation/nam)
 
 ## Compilation
 This directory contains simple correctness test: Insert a bunch of randomly generated keys first and search related value to check if these keys are correctly inserted.

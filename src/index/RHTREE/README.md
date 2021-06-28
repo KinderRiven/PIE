@@ -4,7 +4,7 @@ This directory contains implementations of **Radix Hash Tree (RHTree)**, a hybri
 
 RHTree is basically a NVM version of **[Burst-Trie](https://people.eng.unimelb.edu.au/jzobel/fulltext/acmtois02.pdf)** and **[B-Trie](http://seminar.at.ispras.ru/wp-content/uploads/2010/03/778_2008_Article_94.pdf)** (i.e. additional **Crash Consistency**).    RHTree is firstly used in a LSM-Tree key-value storage system  LightKV, to reduce compaction rang and tail latency caused by backend compaction in conventional LSMT-based key-value storage system.
 
-For more details about LightKV and RHTree, please refer to MSST2020 paper "[LightKV: A Cross Media Key Value Store with Persistent Memory to Cut Long Tail Latency](https://storageconference.us/2020/Papers/12.LightKV.pdf)"
+For more details about LightKV and RHTree, please refer to MSST2020 paper ["LightKV: A Cross Media Key Value Store with Persistent Memory to Cut Long Tail Latency"](https://storageconference.us/2020/Papers/12.LightKV.pdf)
 
 ## Compilation
 This directory contains simple correctness test: Insert a bunch of randomly generated keys first and search related value to check if these keys are correctly inserted.
