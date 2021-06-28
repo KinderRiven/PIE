@@ -1,16 +1,18 @@
 #include "workload_generator.h"
 #include "timer.h"
 #include <assert.h>
+#include <cstdio>
 #include <fstream>
+#include <iostream>
 #include <thread>
 #include <vector>
 
 using namespace PIE;
 using namespace kv_benchmark;
 
-static int g_numa[] = {
-    0, 2, 4, 6, 8, 20, 22, 24, 26, 28, // 10, 12, 14, 16,  18, 30,  32,  34,36,  38
-};
+// #define RESULT_OUTPUT_TO_FILE
+static char _g_oname[DBBENCH_NUM_OPT_TYPE][32] = { "PUT", "GET", "UPDATE" };
+static int g_numa[] = { 0, 2, 4, 6, 8, 20, 22, 24, 26, 28, 10, 12, 14, 16, 18, 30, 32, 34, 36, 38 };
 
 struct thread_param_t {
 public:
@@ -83,14 +85,27 @@ static void thread_task(thread_param_t* param)
         int __type = _benchmark->get_kv_pair(_key, _key_length);
         if (__type == DBBENCH_PUT) {
             Slice __skey(_key, _key_length);
+            _t2.Start();
             Status __status = _scheme->Insert(__skey, _value);
+            _t2.Stop();
             param->result_count[__type]++;
             if (__status.ok()) {
                 param->result_success[__type]++;
             }
         } else if (__type == DBBENCH_GET) {
             Slice __skey(_key, _key_length);
+            _t2.Start();
             Status __status = _scheme->Insert(__skey, _value);
+            _t2.Stop();
+            param->result_count[__type]++;
+            if (__status.ok()) {
+                param->result_success[__type]++;
+            }
+        } else if (__type == DBBENCH_UPDATE) {
+            Slice __skey(_key, _key_length);
+            _t2.Start();
+            Status __status = _scheme->Update(__skey, _value);
+            _t2.Stop();
             param->result_count[__type]++;
             if (__status.ok()) {
                 param->result_success[__type]++;
@@ -118,8 +133,6 @@ WorkloadGenerator::WorkloadGenerator(const char* name, struct generator_paramete
     }
 }
 
-static char _g_oname[DBBENCH_NUM_OPT_TYPE][32] = { "PUT", "GET" };
-
 void WorkloadGenerator::Run()
 {
     std::thread _threads[32];
@@ -143,18 +156,30 @@ void WorkloadGenerator::Run()
 
     for (int i = 0; i < num_threads_; i++) {
         double __lat = 1.0 * _params[i].sum_latency / (1000UL * _params[i].count);
+#ifdef RESULT_OUTPUT_TO_FILE
+        // output into file
         _fout << ">>thread" << i << std::endl;
         _fout << "  [0] count:" << _params[i].count << "]" << std::endl;
         _fout << "  [1] lat:" << __lat << "us" << std::endl;
         _fout << "  [2] iops:" << 1000000.0 / __lat << std::endl;
+#endif
+        // output into screen
+        std::cout << ">>thread" << i << std::endl;
+        std::cout << "  [0] count:" << _params[i].count << "]" << std::endl;
+        std::cout << "  [1] lat:" << __lat << "us" << std::endl;
+        std::cout << "  [2] iops:" << 1000000.0 / __lat << std::endl;
         for (int j = 0; j < DBBENCH_NUM_OPT_TYPE; j++) {
             if (_params[i].vec_latency[j].size() > 0) {
                 char __name[128];
-                sprintf(__name, "%s/%s_%s.lat", result_path_.c_str(), name_, _g_oname[j]);
-                result_output(__name, _params[i].vec_latency[j]);
                 __lat = 1.0 * _params[i].result_latency[j] / (1000UL * _params[i].result_count[j]);
                 std::string __str = _g_oname[j];
+#ifdef RESULT_OUTPUT_TO_FILE
+                // output into file
+                sprintf(__name, "%s/%s_%s.lat", result_path_.c_str(), name_, _g_oname[j]);
+                result_output(__name, _params[i].vec_latency[j]);
                 _fout << "  [" << __str << "][lat:" << __lat << "][iops:" << 1000000.0 / __lat << "][count:" << _params[i].result_count[j] << "|" << 100.0 * _params[i].result_count[j] / _params[i].count << "%%][success:" << _params[i].result_success[j] << "|" << 100.0 * _params[i].result_success[j] / _params[i].result_count[j] << "%%]" << std::endl;
+#endif
+                std::cout << "  [" << __str << "][lat:" << __lat << "][iops:" << 1000000.0 / __lat << "][count:" << _params[i].result_count[j] << "|" << 100.0 * _params[i].result_count[j] / _params[i].count << "%%][success:" << _params[i].result_success[j] << "|" << 100.0 * _params[i].result_success[j] / _params[i].result_count[j] << "%%]" << std::endl;
             }
         }
     }
