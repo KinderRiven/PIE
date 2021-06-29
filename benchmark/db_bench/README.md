@@ -1,14 +1,14 @@
 <!--
  * @Author: your name
  * @Date: 2021-06-27 16:20:10
- * @LastEditTime: 2021-06-29 14:44:54
+ * @LastEditTime: 2021-06-29 14:47:29
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /PIE/benchmark/go-ycsb/README.md
 -->
 # db_bench
 
-## What is Go YCSB?
+## What is db_bench?
 [db_bench](https://github.com/google/leveldb) is the benchmark test program that comes with leveldb.
 
 ## How to run?

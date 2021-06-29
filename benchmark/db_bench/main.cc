@@ -73,12 +73,12 @@ int main(int argc, char* argv[])
     _options.index_type = kCCEH;
     _options.scheme_type = kSingleScheme;
     _options.pmem_file_path = "/home/pmem0/PIE";
-    _options.pmem_file_size = 100UL * 1024 * 1024 * 1024;
+    _options.pmem_file_size = 10UL * 1024 * 1024 * 1024;
 
     int _num_threads = 1;
     size_t _key_length = 8;
-    size_t _num_test = 10000000;
-    size_t _num_warmup = 50000000;
+    size_t _num_test = 5000000;
+    size_t _num_warmup = 1000000;
 
     char _index_type[128];
     char _pmem_path[128] = "/home/pmem0";

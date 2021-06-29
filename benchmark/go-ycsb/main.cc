@@ -1,7 +1,7 @@
 /*
  * @Date: 2021-04-17 11:58:39
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2021-06-27 16:04:41
+ * @LastEditTime: 2021-06-29 14:48:36
  * @FilePath: /SplitKV/benchmark/go-ycsb/rocksdb_main.cc
  */
 
@@ -287,7 +287,7 @@ int main(int argc, char** argv)
     _options.index_type = kCCEH;
     _options.scheme_type = kSingleScheme;
     _options.pmem_file_path = "/home/pmem0/PIE";
-    _options.pmem_file_size = 100UL * 1024 * 1024 * 1024;
+    _options.pmem_file_size = 10UL * 1024 * 1024 * 1024;
 
     char _index_type[128];
     char _pmem_path[128] = "/home/pmem0";
