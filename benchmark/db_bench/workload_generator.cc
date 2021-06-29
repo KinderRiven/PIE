@@ -177,9 +177,9 @@ void WorkloadGenerator::Run()
                 // output into file
                 sprintf(__name, "%s/%s_%s.lat", result_path_.c_str(), name_, _g_oname[j]);
                 result_output(__name, _params[i].vec_latency[j]);
-                _fout << "  [" << __str << "][lat:" << __lat << "][iops:" << 1000000.0 / __lat << "][count:" << _params[i].result_count[j] << "|" << 100.0 * _params[i].result_count[j] / _params[i].count << "%%][success:" << _params[i].result_success[j] << "|" << 100.0 * _params[i].result_success[j] / _params[i].result_count[j] << "%%]" << std::endl;
+                _fout << "  [" << __str << "][lat:" << __lat << "][iops:" << 1000000.0 / __lat << "][count:" << _params[i].result_count[j] << "|" << 100.0 * _params[i].result_count[j] / _params[i].count << "%%][success:" << _params[i].result_success[j] << "|" << 100.0 * _params[i].result_success[j] / _params[i].result_count[j] << "%]" << std::endl;
 #endif
-                std::cout << "  [" << __str << "][lat:" << __lat << "][iops:" << 1000000.0 / __lat << "][count:" << _params[i].result_count[j] << "|" << 100.0 * _params[i].result_count[j] / _params[i].count << "%%][success:" << _params[i].result_success[j] << "|" << 100.0 * _params[i].result_success[j] / _params[i].result_count[j] << "%%]" << std::endl;
+                std::cout << "  [" << __str << "][lat:" << __lat << "][iops:" << 1000000.0 / __lat << "][count:" << _params[i].result_count[j] << "|" << 100.0 * _params[i].result_count[j] / _params[i].count << "%%][success:" << _params[i].result_success[j] << "|" << 100.0 * _params[i].result_success[j] / _params[i].result_count[j] << "%]" << std::endl;
             }
         }
     }

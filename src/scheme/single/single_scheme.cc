@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-06-22 16:07:03
- * @LastEditTime: 2021-06-25 13:26:00
+ * @LastEditTime: 2021-06-29 14:24:06
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /PIE/src/scheme/single/single_scheme.cpp
@@ -11,6 +11,7 @@
 #include "index/CCEH/CCEH_MSB.hpp"
 #include "index/FASTFAIR/btree.hpp"
 #include "index/RHTREE/rhtree.hpp"
+#include "index/WORT/wort.hpp"
 #include "index/example/example_index.hpp"
 
 using namespace PIE;
@@ -33,6 +34,10 @@ SingleScheme::SingleScheme(const Options& options)
         std::cout << "[SingleScheme::SingleScheme - FASTFAIR::FASTFAIRTree]" << std::endl;
         nvm_allocator_ = new PIENVMAllocator(options.pmem_file_path.c_str(), options.pmem_file_size);
         index_ = new FASTFAIR::FASTFAIRTree(nvm_allocator_);
+    } else if (options.index_type == kWORT) {
+        std::cout << "[SingleScheme::SingleScheme - WORT::WORTIndex]" << std::endl;
+        nvm_allocator_ = new PIENVMAllocator(options.pmem_file_path.c_str(), options.pmem_file_size);
+        index_ = new WORT::WORTIndex(nvm_allocator_);
     } else {
         std::cout << "[SingleScheme::SingleScheme - Unknow Index Type]" << std::endl;
     }

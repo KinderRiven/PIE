@@ -1,21 +1,20 @@
 <!--
  * @Author: your name
  * @Date: 2021-06-27 16:20:10
- * @LastEditTime: 2021-06-29 14:46:03
+ * @LastEditTime: 2021-06-29 14:47:29
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /PIE/benchmark/go-ycsb/README.md
 -->
-# Go YCSB
+# db_bench
 
-## What is Go YCSB?
-[go-ycsb](https://github.com/pingcap/go-ycsb) is a Go port of YCSB. It fully supports all YCSB generators and the Core workload so we can do the basic CRUD benchmarks with Go.
+## What is db_bench?
+[db_bench](https://github.com/google/leveldb) is the benchmark test program that comes with leveldb.
 
 ## How to run?
-Use generate.sh to generate data, and then use the main.cc test program to read data from the data file as workloads.
 
 ```c
-./tester --num_thread=8 --pmem_file_path=/home/pmem0/PIE --pmem_file_size=10 --index=CCEH
+./tester --key_length=8 --num_thread=8 --num_warmup=5000000 --num_test=1000000 --pmem_file_size=100 --pmem_file_path=/home/pmem0/PIE --index=CCEH
 ```
 
 command line parameter are as follows:
@@ -24,4 +23,6 @@ command line parameter are as follows:
 | ``thread_num``             | number of created threads for insertion and search | 1               |
 | ``pmem_file_path``         | persistent memory file path                        |                 |
 | ``pmem_file_size``         | persistent memory file size (GB)                   | 10              |
-| ``index``                  | index type, index type, specific supported indexes, please check the readme in the main directory                  | CCEH            |
+| ``index``                  | index type, specific supported indexes, please check the readme in the main directory             | CCEH                   |
+| ``num_warmup``             | the amount of KV pair data to be inserted          | 5M              |
+| ``num_test``               | the amount of KV pair data to be update/search     | 1M              |
