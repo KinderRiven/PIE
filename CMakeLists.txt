@@ -26,6 +26,8 @@ set(SRC_INDEX
     ${SRC_BASE}/src/index/RHTREE/rhtree.cc
     ${SRC_BASE}/src/index/RHTREE/rhtreecity.cc
     ${SRC_BASE}/src/index/RHTREE/rhtreenode.cc
+    # WORT
+    ${SRC_BASE}/src/index/WORT/wort.cc
 )
 
 set(SRC_UTILS
