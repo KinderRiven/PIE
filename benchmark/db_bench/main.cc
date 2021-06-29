@@ -109,6 +109,8 @@ int main(int argc, char* argv[])
                 _options.index_type = kFASTFAIR;
             } else if (!strcmp(_index_type, "RHTREE")) {
                 _options.index_type = kRHTREE;
+            } else if (!strcmp(_index_type, "WORT")) {
+                _options.index_type = kWORT;
             }
         } else if (i > 0) {
             std::cout << "ERROR PARAMETER [" << argv[i] << "]" << std::endl;
