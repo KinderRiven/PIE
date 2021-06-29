@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-06-22 15:27:31
- * @LastEditTime: 2021-06-24 13:11:19
+ * @LastEditTime: 2021-06-29 14:23:17
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /PIE/include/options.hpp
@@ -18,6 +18,7 @@ enum index_type_t {
     kCCEH = 1,
     kRHTREE = 2,
     kFASTFAIR = 3,
+    kWORT = 4,
 };
 
 enum scheme_type_t {
