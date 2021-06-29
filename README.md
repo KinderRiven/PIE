@@ -4,18 +4,6 @@ Framework for Persistent Index Evaluation (PIE)
 ## Overview
 PIE is a code repository based on persistent memory which includes the index, memory allocator and benchmark. It provides a unified interface that allows library users to easily incorporate their work into our architecture. In addition, the architecture includes and summarizes a variety of frontier research based on persistent memory.
 
-## Directory Structure
-
-| Directiry Path | Description |
-| -------------- | ----------- |
-| include        | Header file |
-| src/allocator  | If you implement a memory allocator class, create a folder placement code file in the directory. |
-| src/index      | If you implement an index class, create a folder placement code file in the directory. |
-| src/store      | If you implement an store class, create a folder placement code file in the directory. |
-| test_script    | Test scripts for pmemkv |
-| benchmark      | Benchmark test class |
-| lib            | Reference code file for third-party libraries |
-
 ## Including Index
 
 ### B+-Tree
