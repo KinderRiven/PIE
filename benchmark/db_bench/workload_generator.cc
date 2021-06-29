@@ -85,15 +85,7 @@ static void thread_task(thread_param_t* param)
         int __type = _benchmark->get_kv_pair(_key, _key_length);
         if (__type == DBBENCH_PUT) {
             Slice __skey(_key, _key_length);
-            _t2.Start();
-            Status __status = _scheme->Insert(__skey, _value);
-            _t2.Stop();
-            param->result_count[__type]++;
-            if (__status.ok()) {
-                param->result_success[__type]++;
-            }
-        } else if (__type == DBBENCH_GET) {
-            Slice __skey(_key, _key_length);
+            _value = (void*)(*(uint64_t*)_key);
             _t2.Start();
             Status __status = _scheme->Insert(__skey, _value);
             _t2.Stop();
@@ -103,11 +95,21 @@ static void thread_task(thread_param_t* param)
             }
         } else if (__type == DBBENCH_UPDATE) {
             Slice __skey(_key, _key_length);
+            _value = (void*)(*(uint64_t*)_key);
             _t2.Start();
             Status __status = _scheme->Update(__skey, _value);
             _t2.Stop();
             param->result_count[__type]++;
             if (__status.ok()) {
+                param->result_success[__type]++;
+            }
+        } else if (__type == DBBENCH_GET) {
+            Slice __skey(_key, _key_length);
+            _t2.Start();
+            Status __status = _scheme->Search(__skey, &_value);
+            _t2.Stop();
+            param->result_count[__type]++;
+            if (__status.ok() && (*(uint64_t*)_key == *(uint64_t*)_value)) {
                 param->result_success[__type]++;
             }
         }
