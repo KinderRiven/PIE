@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2020-11-02 13:42:48
- * @LastEditTime: 2021-06-28 13:24:22
+ * @LastEditTime: 2021-06-29 14:34:43
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /PIE/benchmark/db_bench/db_bench.h
@@ -31,7 +31,7 @@ public:
     {
         printf(">>[YCSB] CREATE A NEW YCSB BENCHMARK!\n");
         random_ = new Random(seed);
-        printf("  [TYPE:%d][SEED:%d][KV_LENGTH:%zu/%zu]\n", type_, seed, key_length_, value_length_);
+        printf("  [TYPE:%d][SEED:%d][KV_LENGTH:%zuB]\n", type_, seed, key_length_);
     }
 
     ~DBBench()
@@ -69,8 +69,6 @@ public:
     Random* random_;
 
     size_t key_length_;
-
-    size_t value_length_;
 };
 };
 
