@@ -109,7 +109,7 @@ static void thread_task(thread_param_t* param)
             Status __status = _scheme->Search(__skey, &_value);
             _t2.Stop();
             param->result_count[__type]++;
-            if (__status.ok() && (*(uint64_t*)_key == *(uint64_t*)_value)) {
+            if (__status.ok() && (*(uint64_t*)_key == (uint64_t)_value)) {
                 param->result_success[__type]++;
             }
         }
