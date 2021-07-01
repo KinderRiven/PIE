@@ -1,8 +1,8 @@
 /*
- * @Author: your name
+ * @Author: KinderRiven
  * @Date: 2021-06-22 15:27:31
- * @LastEditTime: 2021-06-29 14:23:17
- * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2021-07-01 10:51:25
+ * @LastEditors: KinderRiven
  * @Description: In User Settings Edit
  * @FilePath: /PIE/include/options.hpp
  */
@@ -14,11 +14,11 @@
 
 namespace PIE {
 enum index_type_t {
-    kExampleIndex = 0,
-    kCCEH = 1,
-    kRHTREE = 2,
-    kFASTFAIR = 3,
-    kWORT = 4,
+    kExampleIndex = 0, // example
+    kCCEH = 1, // Hashing - CCEH
+    kRHTREE = 2, // RH-Tree
+    kFASTFAIR = 3, // B+Tree - FAST-FAIR
+    kWORT = 4, // Trie - WORT
 };
 
 enum scheme_type_t {
@@ -28,17 +28,31 @@ enum scheme_type_t {
 
 class Options {
 public:
-    Options() { }
+    Options()
+        : pmem_file_size(2UL * 1024 * 1024 * 1024)
+        , index_type(kCCEH)
+        , scheme_type(kSingleScheme)
+    {
+        pmem_file_path = "/home/pmem0/PIE";
+    }
 
     ~Options() = default;
 
 public:
+    // persistent memory pool size
+    // default : 2GB
     size_t pmem_file_size;
 
+    // persistent memory poll path
+    // defaul : /home/pmem0/PIE
     std::string pmem_file_path;
 
+    // index type
+    // default : CCEH
     index_type_t index_type;
 
+    // scheme type
+    // default : SingleScheme
     scheme_type_t scheme_type;
 };
 };

@@ -1,8 +1,8 @@
 /*
  * @Date: 2021-04-17 11:58:39
- * @LastEditors: Please set LastEditors
- * @LastEditTime: 2021-06-29 14:48:36
- * @FilePath: /SplitKV/benchmark/go-ycsb/rocksdb_main.cc
+ * @LastEditors: KinderRiven
+ * @LastEditTime: 2021-07-01 10:42:15
+ * @FilePath: /PIE/benchmark/go-ycsb/main.cc
  */
 
 #include <algorithm>
@@ -179,25 +179,21 @@ void read_ycsb_file(const char* name)
                 if (_res) {
                     g_vec_opt[_num_opt % kNumThread].push_back(new ycsb_operator_t(OPT_TYPE_SEARCH, _key, 0));
                 }
-                // std::cout << "READ " << _key << std::endl;
             } else if (_line == "UPDATE") {
                 _res = handle_update(_fin, _key, _value);
                 if (_res) {
                     g_vec_opt[_num_opt % kNumThread].push_back(new ycsb_operator_t(OPT_TYPE_UPDATE, _key, 0));
                 }
-                // std::cout << "UPDATE " << _key << " " << _value << std::endl;
             } else if (_line == "INSERT") {
                 _res = handle_insert(_fin, _key, _value);
                 if (_res) {
                     g_vec_opt[_num_opt % kNumThread].push_back(new ycsb_operator_t(OPT_TYPE_INSERT, _key, 0));
                 }
-                // std::cout << "INSERT " << _key << " " << _value << std::endl;
             } else if (_line == "SCAN") {
                 _res = handle_scan(_fin, _key, _range);
                 if (_res) {
                     g_vec_opt[_num_opt % kNumThread].push_back(new ycsb_operator_t(OPT_TYPE_SCAN, _key, _range));
                 }
-                // std::cout << "SCAN " << _key << " " << _range << std::endl;
             }
             _num_opt++;
         }
@@ -312,6 +308,8 @@ int main(int argc, char** argv)
                 _options.index_type = kFASTFAIR;
             } else if (!strcmp(_index_type, "RHTREE")) {
                 _options.index_type = kRHTREE;
+            } else if (!strcmp(_index_type, "WORT")) {
+                _options.index_type = kWORT;
             }
         } else if (i > 0) {
             std::cout << "ERROR PARAMETER [" << argv[i] << "]" << std::endl;

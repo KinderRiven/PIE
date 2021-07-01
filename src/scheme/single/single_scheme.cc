@@ -1,10 +1,10 @@
 /*
- * @Author: your name
+ * @Author: KinderRiven
  * @Date: 2021-06-22 16:07:03
- * @LastEditTime: 2021-06-29 14:24:06
- * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2021-07-01 10:52:10
+ * @LastEditors: KinderRiven
  * @Description: In User Settings Edit
- * @FilePath: /PIE/src/scheme/single/single_scheme.cpp
+ * @FilePath: /PIE/src/scheme/single/single_scheme.cc
  */
 
 #include "single_scheme.hpp"
