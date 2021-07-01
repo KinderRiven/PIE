@@ -189,6 +189,7 @@ class page {
         hdr.level = level;
         for (int i = 0; i < cardinality; i++) {
             records[i].key.Nullify();
+            records[i].ptr = nullptr;
         }
         records[0].ptr = nullptr;
     }
@@ -200,6 +201,7 @@ class page {
         hdr.level = level;
         for (int i = 0; i < cardinality; i++) {
             records[i].key.Nullify();
+            records[i].ptr = nullptr;
         }
         records[0].key = key;
         records[0].ptr = (char *)right;
