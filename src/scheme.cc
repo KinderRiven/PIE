@@ -1,9 +1,7 @@
 /*
- * @Author: your name
- * @Date: 2021-06-22 16:18:12
- * @LastEditTime: 2021-06-24 11:14:42
- * @LastEditors: Please set LastEditors
- * @Description: In User Settings Edit
+ * @Date: 2021-06-28 10:22:32
+ * @LastEditors: KinderRiven
+ * @LastEditTime: 2021-07-01 10:51:57
  * @FilePath: /PIE/src/scheme.cc
  */
 

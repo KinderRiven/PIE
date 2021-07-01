@@ -1,12 +1,3 @@
-/*
- * @Author: your name
- * @Date: 2021-06-23 20:08:33
- * @LastEditTime: 2021-06-23 20:09:00
- * @LastEditors: Please set LastEditors
- * @Description: In User Settings Edit
- * @FilePath: /PIE/src/status.cc
- */
-
 #include "status.hpp"
 
 namespace PIE {
